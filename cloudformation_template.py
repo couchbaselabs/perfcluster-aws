@@ -4,18 +4,29 @@
 # cloudformation template by hand.  It also allows for DRY approaches
 # to maintaining cloudformation templates.
 
+import sys
+from optparse import OptionParser
+
 from troposphere import Ref, Template, Parameter, Output, Join, GetAtt, Tags
 import troposphere.ec2 as ec2
 
-t = Template()
+usage = "usage: %prog -s <number_couchbase_servers> -g <number_sync_gateways> -l <number_gateloads>"
+parser = OptionParser(usage=usage)
+parser.add_option("-s", "--num_servers", action="store", type="int", dest="num_servers", default=3, help="number of couchbase server instances")
+parser.add_option("-g", "--num_sync_gateways", action="store", type="int", dest="num_sync_gateways", default=1, help="number of sync_gateway instances")
+parser.add_option("-l", "--num_gateloads", action="store", type="int", dest="num_gateloads", default=1, help="number of gateload instances")
 
+argv = sys.argv[1:]
+(opts, args) = parser.parse_args(argv)
+
+NUM_COUCHBASE_SERVERS=opts.num_servers
+NUM_SYNC_GW_SERVERS=opts.num_sync_gateways
+NUM_GATELOADS=opts.num_gateloads
+
+t = Template()
 t.add_description(
     'An Ec2-classic stack with Couchbase Server, Sync Gateway + load testing tools '
 )
-
-NUM_COUCHBASE_SERVERS=3
-NUM_SYNC_GW_SERVERS=1
-NUM_GATELOADS=1
 
 COUCHBASE_INSTANCE_TYPE="m3.medium"
 SYNC_GW_INSTANCE_TYPE="m3.medium"
