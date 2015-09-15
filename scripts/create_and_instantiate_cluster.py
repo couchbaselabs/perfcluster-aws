@@ -20,8 +20,8 @@ parser.add_option("-g", "--num-sync-gateways",
                   action="store", type="int", dest="num_sync_gateways", default=1,
                   help="number of sync_gateway instances")
 
-parser.add_option("-l", "--num-gatings",
-                  action="store", type="int", dest="num_gatings", default=1,
+parser.add_option("-l", "--num-gatlings",
+                  action="store", type="int", dest="num_gatlings", default=1,
                   help="number of gatling instances")
 
 arg_parameters = sys.argv[1:]
@@ -31,7 +31,7 @@ arg_parameters = sys.argv[1:]
 STACKNAME = opts.stackname
 NUM_COUCHBASE_SERVERS = opts.num_servers
 NUM_SYNC_GATEWAYS = opts.num_sync_gateways
-NUM_GATLINGS = opts.num_gatings
+NUM_GATLINGS = opts.num_gatlings
 
 print ">>> Provisioning cluster... "
 print ">>> Couchbase Server Instances: {}".format(NUM_COUCHBASE_SERVERS)
