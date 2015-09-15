@@ -33,6 +33,7 @@
     couchbase_server_bucket_replica: 1
 
   tasks:
+    - debug: msg="Downloading Couchbase server v. {{ couchbase_server_centos_ee_version }}"
     - name: set couchbase_server_primary_node variable
       set_fact:
         couchbase_server_primary_node: "{{ lookup('file', '../../temp_couchbase_server_primary_node') }}"

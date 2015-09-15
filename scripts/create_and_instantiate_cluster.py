@@ -7,10 +7,22 @@ import cloudformation_template
 
 usage = "usage: %create_and_instantiate_cloud -n <cluster_name> -s <number_couchbase_servers> -g <number_sync_gateways> -l <number_gateloads>"
 parser = OptionParser(usage=usage)
-parser.add_option("-n", "--stackname", action="store", type="string", dest="stackname", default="default", help="name for you cluster")
-parser.add_option("-s", "--num_servers", action="store", type="int", dest="num_servers", default=3, help="number of couchbase server instances")
-parser.add_option("-g", "--num_sync_gateways", action="store", type="int", dest="num_sync_gateways", default=1, help="number of sync_gateway instances")
-parser.add_option("-l", "--num_gateloads", action="store", type="int", dest="num_gateloads", default=1, help="number of gateload instances")
+
+parser.add_option("-n", "--stackname",
+                  action="store", type="string", dest="stackname", default="default",
+                  help="name for you cluster")
+
+parser.add_option("-s", "--num-servers",
+                  action="store", type="int", dest="num_servers", default=3,
+                  help="number of couchbase server instances")
+
+parser.add_option("-g", "--num-sync-gateways",
+                  action="store", type="int", dest="num_sync_gateways", default=1,
+                  help="number of sync_gateway instances")
+
+parser.add_option("-l", "--num-gatings",
+                  action="store", type="int", dest="num_gatings", default=1,
+                  help="number of gatling instances")
 
 arg_parameters = sys.argv[1:]
 
@@ -19,7 +31,7 @@ arg_parameters = sys.argv[1:]
 STACKNAME = opts.stackname
 NUM_COUCHBASE_SERVERS = opts.num_servers
 NUM_SYNC_GATEWAYS = opts.num_sync_gateways
-NUM_GATLINGS = opts.num_gateloads
+NUM_GATLINGS = opts.num_gatings
 
 print ">>> Provisioning cluster... "
 print ">>> Couchbase Server Instances: {}".format(NUM_COUCHBASE_SERVERS)
