@@ -37,34 +37,26 @@ BRANCH = opts.source_branch
 current_time = time.time()
 step_times = {}
 
-def logtime(id):
-    global current_time
-    step_times[id] = time.time() - current_time
-    current_time = time.time()
+
+def run_ansible_playbook(script_name, extra_vars=""):
+    if extra_vars != "":
+        subprocess.call(["ansible-playbook", "-l", os.path.expandvars("$KEYNAME"), script_name, "--extra-vars", extra_vars])
+    else:
+        subprocess.call(["ansible-playbook", "-l", os.path.expandvars("$KEYNAME"), script_name])
 
 os.chdir("../ansible/playbooks")
 
-subprocess.call(["ansible-playbook", "-l", os.path.expandvars("$KEYNAME"), "install-go.yml"])
-logtime("install-go.yml")
-
-subprocess.call(["ansible-playbook", "-l", os.path.expandvars("$KEYNAME"), "install-couchbase-server-stable.yml", "--extra-vars", "couchbase_server_centos_ee_version={}".format(COUCHBASE_SERVER_VERSION)])
-logtime("install-couchbase-server-stable.yml")
+run_ansible_playbook("install-go.yml")
+run_ansible_playbook("install-couchbase-server-stable.yml", "couchbase_server_centos_ee_version={}".format(COUCHBASE_SERVER_VERSION))
 
 if BUILD_FROM_SOURCE:
     print "Build from source"
-    subprocess.call(["ansible-playbook", "-l", os.path.expandvars("$KEYNAME"), "build-sync-gateway-source.yml", "--extra-vars", "branch={}".format(BRANCH)])
-    logtime("build-sync-gateway-source.yml")
+    run_ansible_playbook("build-sync-gateway-source.yml", "branch={}".format(BRANCH))
 else:
     print "Build stable"
-    subprocess.call(["ansible-playbook", "-l", os.path.expandvars("$KEYNAME"), "install-sync-gateway-release.yml", "--extra-vars", "couchbase_sync_gateway_centos_ee_version={}".format(SYNC_GATEWAY_VERSION)])
-    logtime("build-sync-gateway-source.yml")
+    run_ansible_playbook("install-sync-gateway-release.yml", "couchbase_sync_gateway_centos_ee_version={}".format(SYNC_GATEWAY_VERSION))
 
-subprocess.call(["ansible-playbook", "-l", os.path.expandvars("$KEYNAME"), "install-sync-gateway-service.yml"])
-logtime("install-sync-gateway-service.yml")
+run_ansible_playbook("install-sync-gateway-service.yml")
+run_ansible_playbook("install-splunkforwarder.yml")
 
-subprocess.call(["ansible-playbook", "-l", os.path.expandvars("$KEYNAME"), "install-splunkforwarder.yml"])
-logtime("install-splunkforwarder.yml")
-
-for k in step_times:
-    print "[{0}] = {1}".format(k, step_times[k])
 

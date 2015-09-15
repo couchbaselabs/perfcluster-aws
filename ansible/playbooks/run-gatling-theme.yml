@@ -3,6 +3,10 @@
   remote_user: centos
   sudo: yes
 
+  vars:
+    number_of_pullers: 0
+    number_of_pushers: 7500
+
   tasks:
 
   - name: Remove local simulation log storage
@@ -11,7 +15,7 @@
     sudo: no
 
   - name: Run sg-gatling-load theme
-    shell: mvn test -e -P gateload-users -DnumPullers=0 -DnumPushers=7500 -DrampUpIntervalMs=600000 > somelog.txt
+    shell: mvn test -e -P gateload-users -DnumPullers={{ number_of_pullers }} -DnumPushers={{ number_of_pushers }} -DrampUpIntervalMs=600000 > somelog.txt
     args:
       chdir: /home/projects/sg-gatling-load/
 
