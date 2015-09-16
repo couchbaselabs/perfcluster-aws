@@ -37,21 +37,67 @@ aws_secret_access_key = ABGHEFCDABGHEFCDABGHEFCDABGHEFCDABGHEFCDAB
 ```
 $ export AWS_ACCESS_KEY_ID=CDABGHEFCDABGHEFCDAB
 $ export AWS_SECRET_ACCESS_KEY=ABGHEFCDABGHEFCDABGHEFCDABGHEFCDABGHEFCDAB
+$ export AWS_KEY=<your-aws-keypair-name>
 ```
 
-## How to generate CloudFormation template
-
-This uses [troposphere](https://github.com/cloudtools/troposphere) to generate the Cloudformation template (a json file).
-
-The Cloudformation config is declared via a Python DSL, which then generates the Cloudformation Json.
-
-Generate template after changes to the python file:
+**To run tests or ansible scripts**
 
 ```
-$ python cloudformation_template.py > cloudformation_template.json
+$ export KEYNAME=key_<your-aws-keypair-name>
 ```
 
-## Install steps
+## Install steps (Simplified Version)
+
+### Creates topology and starts the Cloudformation stack on AWS
+
+```
+python create_and_instantiate_cluster.py 
+    --stackname="YourCloudFormationStack"
+    --num-servers=2
+    --num-sync-gateways=1
+    --num-gatlings=1
+```
+
+This script performs a series of steps for you
+1) It uses [troposphere](https://github.com/cloudtools/troposphere) to generate the Cloudformation template (a json file). The Cloudformation config is declared via a Python DSL, which then generates the Cloudformation Json.
+2) The generated template is uploaded to AWS with ssh access to the AWS_KEY name you specified (assuming that you have set up that keypair in AWS prior to this)
+
+### Provision the cluster
+
+Install Couchbase Server and build sync_gateway from source with optional --branch (master is default)
+
+```
+python provision_cluster.py 
+    --server-version=3.1.0
+    --build-from-source
+    --branch="feature/distributed_cache_stale_ok"
+```
+
+(IN PROGRESS) Install Couchbase Server and download sync_gateway binary (1.1.1 is default)
+
+```
+python provision_cluster.py 
+    --server-version=3.1.0
+    --sync-gateway-version=1.1.1
+```
+
+### Setup and run gatling tests
+
+```
+python run_tests.py
+    --number-pullers=0
+    --number-pushers=7500
+```
+
+### Teardown cluster
+
+```
+ teardown_cluster.py 
+    --stackname="YourCloudFormationStack"
+```
+
+## More control
+### If you require debugging specific scipts or need more control, you are still able to do many of the steps one by one
 
 ### Kick off EC2 instances
 
@@ -68,7 +114,6 @@ Alternatively, it can be kicked off via the AWS web UI with the restriction that
 ### Provision EC2 instances
 
 * `cd ansible/playbooks`
-* `export KEYNAME=key_yourkeyname` 
 * Run command
 ```
 ansible-playbook -l $KEYNAME install-go.yml && \
