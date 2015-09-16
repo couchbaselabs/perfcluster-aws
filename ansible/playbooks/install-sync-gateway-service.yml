@@ -15,6 +15,7 @@
   sudo: true
   vars:
     writer: "false"
+    sync_gateway_config_filepath: "files/sync_gateway_config.json"
   tasks:
   - name: set couchbase_server_primary_node variable
     set_fact:
@@ -30,7 +31,7 @@
   - name: change permissions of sync gateway executable
     file: path=/home/sync_gateway/sync_gateway mode=a+x
   - name: copy sync gateway config to host
-    template: src=files/sync_gateway_config.json dest=/home/sync_gateway/sync_gateway.json owner=sync_gateway group=sync_gateway mode=0644 force=true
+    template: src={{ sync_gateway_config_filepath }} dest=/home/sync_gateway/sync_gateway.json owner=sync_gateway group=sync_gateway mode=0644 force=true
   - name: install sync gateway service
     shell: ./sync_gateway_service_install.sh --sgpath=/home/sync_gateway/sync_gateway chdir=/home/centos/sync_gateway/service
   - name: update service file to enable garbage collector debugging
