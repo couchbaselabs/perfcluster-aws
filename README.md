@@ -46,7 +46,7 @@ $ export AWS_KEY=<your-aws-keypair-name>
 $ export KEYNAME=key_<your-aws-keypair-name>
 ```
 
-## Install steps (Simplified Version)
+## Install steps 
 
 `cd scripts` to get into the scripts subdirectory.
 
@@ -98,49 +98,9 @@ python run_tests.py
     --stackname="YourCloudFormationStack"
 ```
 
-## More control
-### If you require debugging specific scipts or need more control, you are still able to do many of the steps one by one
+### Distributed index branch testing note
 
-### Kick off EC2 instances
-
-**Via AWS CLI**
-
-```
-aws cloudformation create-stack --stack-name CouchbasePerfCluster --region us-east-1 \
---template-body "file://cloudformation_template.json" \
---parameters "ParameterKey=KeyName,ParameterValue=<your_keypair_name>"
-```
-
-Alternatively, it can be kicked off via the AWS web UI with the restriction that the AWS cloudformation_template.json file must be uploaded to [S3](http://couchbase-mobile.s3.amazonaws.com/perfcluster-aws/cloudformation_template.json).
-
-### Provision EC2 instances
-
-* `cd ansible/playbooks`
-* Run command
-```
-ansible-playbook -l $KEYNAME install-go.yml && \
-ansible-playbook -l $KEYNAME install-couchbase-server-3.1.0.yml && \
-ansible-playbook -l $KEYNAME build-sync-gateway.yml && \
-ansible-playbook -l $KEYNAME build-gateload.yml && \
-ansible-playbook -l $KEYNAME install-sync-gateway-service.yml && \
-ansible-playbook -l $KEYNAME install-splunkforwarder.yml
-```
-
-To use a different Sync Gateway branch:
-
-Replace:
-
-```
-ansible-playbook -l $KEYNAME build-sync-gateway.yml
-```
-
-with:
-
-```
-ansible-playbook -l $KEYNAME build-sync-gateway.yml --extra-vars "branch=feature/distributed_cache_stale_ok"
-```
-
-If you are testing the Sync Gateway distributed cache branch, one extra step is needed:
+If you are testing the Sync Gateway distributed index branch, one extra step is needed:
 
 ```
 ansible-playbook -l $KEYNAME configure-sync-gateway-writer.yml
@@ -148,18 +108,13 @@ ansible-playbook -l $KEYNAME configure-sync-gateway-writer.yml
 
 ### Starting Gateload tests
 
+If you need to run Gateload rather than Gatling, do the following steps
+
 ```
 $ cd ../..
 $ python generate_gateload_configs.py  # generates and uploads gateload configs with correct SG IP / user offset
 $ cd ansible/playbooks
 $ ansible-playbook -l $KEYNAME start-gateload.yml
-```
-
-### Starting Gatling tests
-
-```
-$ ansible-playbook -l $KEYNAME configure-gatling.yml
-$ ansible-playbook -l $KEYNAME run-gatling-theme.yml
 ```
 
 ### View Gatelod test output
