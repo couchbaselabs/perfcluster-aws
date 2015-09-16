@@ -48,10 +48,12 @@ $ export KEYNAME=key_<your-aws-keypair-name>
 
 ## Install steps (Simplified Version)
 
+`cd scripts` to get into the scripts subdirectory.
+
 ### Creates topology and starts the Cloudformation stack on AWS
 
 ```
-python scripts/create_and_instantiate_cluster.py 
+python create_and_instantiate_cluster.py 
     --stackname="YourCloudFormationStack"
     --num-servers=2
     --num-sync-gateways=1
@@ -67,7 +69,7 @@ This script performs a series of steps for you
 Install Couchbase Server and build sync_gateway from source with optional --branch (master is default)
 
 ```
-python scripts/provision_cluster.py 
+python provision_cluster.py 
     --server-version=3.1.0
     --build-from-source
     --branch="feature/distributed_cache_stale_ok"
@@ -76,7 +78,7 @@ python scripts/provision_cluster.py
 (IN PROGRESS) Install Couchbase Server and download sync_gateway binary (1.1.1 is default)
 
 ```
-python scripts/provision_cluster.py 
+python provision_cluster.py 
     --server-version=3.1.0
     --sync-gateway-version=1.1.1
 ```
@@ -84,7 +86,7 @@ python scripts/provision_cluster.py
 ### Setup and run gatling tests
 
 ```
-python scripts/run_tests.py
+python run_tests.py
     --number-pullers=0
     --number-pushers=7500
 ```
@@ -92,7 +94,7 @@ python scripts/run_tests.py
 ### Teardown cluster
 
 ```
- python scripts/teardown_cluster.py 
+ python teardown_cluster.py 
     --stackname="YourCloudFormationStack"
 ```
 
