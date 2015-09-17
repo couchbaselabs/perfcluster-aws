@@ -106,7 +106,7 @@ def upload_gateload_config(gateload_ec2_id, sync_gateway_private_ip, user_offset
 
 def main():
 
-    os.chdir("ansible/playbooks")
+    os.chdir("../ansible/playbooks")
 
     sync_gateway_ips = sync_gateways()
 
