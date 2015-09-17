@@ -91,6 +91,16 @@ python run_tests.py
     --number-pushers=7500
 ```
 
+### Setup and run gateload tests
+
+Currently the load generation is specified in ansible/files/gateload_config.json.
+(In progress) Allow this to be parameterized
+
+```
+python run_tests.py
+    --use-gateload
+```
+
 ### Teardown cluster
 
 ```
