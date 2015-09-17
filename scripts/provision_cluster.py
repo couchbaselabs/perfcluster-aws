@@ -17,6 +17,10 @@ parser.add_option("-g", "--sync-gateway-version",
                   action="store", type="string", dest="sync_gateway_version", default="1.1.1",
                   help="sync_gateway binary version to download")
 
+parser.add_option("-f", "--sync-gateway-config-file",
+                  action="store", type="string", dest="sync_gateway_config_file", default="files/sync_gateway_config.json",
+                  help="path to your sync_gateway_config file")
+
 parser.add_option("-c", "--build-from-source",
                   action="store_true", dest="build_from_source", default=False,
                   help="build sync_gateway from source")
@@ -31,12 +35,9 @@ arg_parameters = sys.argv[1:]
 
 COUCHBASE_SERVER_VERSION = opts.server_version
 SYNC_GATEWAY_VERSION = opts.sync_gateway_version
+SYNC_GATEWAY_CONFIG_FILE_PATH = opts.sync_gateway_config_file
 BUILD_FROM_SOURCE = opts.build_from_source
 BRANCH = opts.source_branch
-
-current_time = time.time()
-step_times = {}
-
 
 def run_ansible_playbook(script_name, extra_vars=""):
     if extra_vars != "":
@@ -56,7 +57,7 @@ else:
     print "Build stable"
     run_ansible_playbook("install-sync-gateway-release.yml", "couchbase_sync_gateway_centos_ee_version={}".format(SYNC_GATEWAY_VERSION))
 
-run_ansible_playbook("install-sync-gateway-service.yml")
+run_ansible_playbook("install-sync-gateway-service.yml", "sync_gateway_config_filepath={}".format(SYNC_GATEWAY_CONFIG_FILE_PATH))
 run_ansible_playbook("install-splunkforwarder.yml")
 
 
