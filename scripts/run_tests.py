@@ -31,6 +31,7 @@ USE_GATELOAD = opts.use_gateload
 
 if USE_GATELOAD:
     print "Using Gateload"
+    print ">>> Starting gateload with {0} pullers and {1} pushers".format(NUMBER_PULLERS, NUMBER_PUSHERS)
 
     os.chdir("../ansible/playbooks")
 
@@ -38,7 +39,7 @@ if USE_GATELOAD:
     subprocess.call(["ansible-playbook", "-l", os.path.expandvars("$KEYNAME"), "build-gateload.yml"])
 
     # Generate gateload config
-    generate_gateload_configs.main()
+    generate_gateload_configs.main(NUMBER_PULLERS, NUMBER_PUSHERS)
 
     # Start gateload
     subprocess.call(["ansible-playbook", "-l", os.path.expandvars("$KEYNAME"), "start-gateload.yml"])

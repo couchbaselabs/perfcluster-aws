@@ -69,21 +69,25 @@ def gateloads():
 
     return gateload_dicts
 
-def render_gateload_template(sync_gateway_private_ip, user_offset):
+def render_gateload_template(sync_gateway_private_ip, user_offset, number_of_pullers, number_of_pushers):
         # run template to produce file
         gateload_config = open("files/gateload_config.json")
         template = Template(gateload_config.read())
         rendered = template.render(
             sync_gateway_private_ip=sync_gateway_private_ip,
-            user_offset=user_offset
+            user_offset=user_offset,
+            number_of_pullers=number_of_pullers,
+            number_of_pushers=number_of_pushers
         )
         return rendered 
 
-def upload_gateload_config(gateload_ec2_id, sync_gateway_private_ip, user_offset):
+def upload_gateload_config(gateload_ec2_id, sync_gateway_private_ip, user_offset, number_of_pullers, number_of_pushers):
     
     rendered = render_gateload_template(
         sync_gateway_private_ip,
-        user_offset
+        user_offset,
+        number_of_pullers,
+        number_of_pushers
     )
     print rendered
 
@@ -98,7 +102,7 @@ def upload_gateload_config(gateload_ec2_id, sync_gateway_private_ip, user_offset
     print "File transfer result: {}".format(result)
 
 
-def main():
+def main(number_of_pullers, number_of_pushers):
 
     sync_gateway_ips = sync_gateways()
 
@@ -115,7 +119,9 @@ def main():
         upload_gateload_config(
             gateload_ec2_id,
             sync_gateway_private_ip,
-            user_offset
+            user_offset,
+            number_of_pullers,
+            number_of_pushers
         )
 
     print "Finished successfully"
