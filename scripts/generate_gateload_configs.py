@@ -41,19 +41,13 @@ def sync_gateways():
         private_ip = result_json["ec2_private_ip_address"]
         print "sync gw private ip: {}".format(private_ip)
 
-        # skip the cache writer
-        cache_tag = "ec2_tag_CacheType"
-        if result_json.has_key(cache_tag) and result_json[cache_tag] == "writer":
-            print "Skipping cache writer: {}".format(public_ip)
-            continue
-
         private_ips.append(private_ip)
 
     return private_ips
 
 
 def public_ip_addresses_for_tag(tag):
-    cmd = "ansible {} --list-hosts".format(tag)
+    cmd = "ansible {0} --list-hosts --limit {1}".format(tag, os.path.expandvars("$KEYNAME"))
     result = subprocess.check_output(cmd, shell=True)
     instance_list = result.split("\n")
     instance_list = [x.strip() for x in instance_list]
@@ -105,8 +99,6 @@ def upload_gateload_config(gateload_ec2_id, sync_gateway_private_ip, user_offset
 
 
 def main():
-
-    os.chdir("../ansible/playbooks")
 
     sync_gateway_ips = sync_gateways()
 
