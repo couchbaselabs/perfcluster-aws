@@ -10,11 +10,11 @@ usage = "usage: %run_tests.py -u <number_of_pushers> -d <number_of_pullers>"
 parser = OptionParser(usage=usage)
 
 parser.add_option("-d", "--number-pullers",
-                  action="store", type="string", dest="number_pullers", default=5000,
+                  action="store", type="string", dest="number_pullers", default=8000,
                   help="number of pullers")
 
 parser.add_option("-u", "--number-pushers",
-                  action="store", type="int", dest="number_pushers", default=8000,
+                  action="store", type="int", dest="number_pushers", default=5000,
                   help="number of pushers")
 
 parser.add_option("-o", "--use-gateload",
