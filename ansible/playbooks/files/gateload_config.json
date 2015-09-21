@@ -35,5 +35,5 @@
     "LogRequests": false,
     "UserOffset": {{ user_offset }},
     "AuthType": "basic",
-    "Password": ""
+    "Password": "password"
 }
