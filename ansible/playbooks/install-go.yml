@@ -13,6 +13,8 @@
     yum: pkg=screen state=latest
   - name: install emacs
     yum: pkg=emacs-nox state=latest
+  - name: install wget
+    yum: pkg=wget state=latest
   - name: install graphviz
     yum: pkg=graphviz state=latest
   - name: install the 'Development tools' package group
