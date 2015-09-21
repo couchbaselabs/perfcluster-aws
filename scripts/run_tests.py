@@ -5,7 +5,7 @@ from optparse import OptionParser
 
 import generate_gateload_configs
 
-usage = "usage: %run_tests.py -u <number_of_pushers> -d <number_of_pullers>"
+usage = "usage: %run_tests.py -u <number_of_pushers> -d <number_of_pullers> --use-gateload"
 
 parser = OptionParser(usage=usage)
 
