@@ -56,11 +56,11 @@ $ export KEYNAME=key_<your-aws-keypair-name>
 python create_and_instantiate_cluster.py 
     --stackname="YourCloudFormationStack"
     --num-servers=2
-    --server-type="m3.medium"
+    --server-type="m3.large"
     --num-sync-gateways=1
-    --sync-gateway-type="m3.large"
+    --sync-gateway-type="m3.medium"
     --num-gatlings=1
-    --gatling-type="m3.xlarge"
+    --gatling-type="m3.medium"
 ```
 
 This script performs a series of steps for you
