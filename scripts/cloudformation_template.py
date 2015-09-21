@@ -11,20 +11,27 @@ from troposphere import Ref, Template, Parameter, Output, Join, GetAtt, Tags
 import troposphere.ec2 as ec2
 
 
-def gen_template(num_servers, num_syncgateways, num_gateloads):
+def gen_template(
+        num_servers,
+        server_type,
+        num_syncgateways,
+        sync_gateway_type,
+        num_gateloads,
+        gateload_type):
 
     NUM_COUCHBASE_SERVERS = num_servers
+    COUCHBASE_INSTANCE_TYPE = server_type
+
     NUM_SYNC_GW_SERVERS = num_syncgateways
+    SYNC_GW_INSTANCE_TYPE = sync_gateway_type
+
     NUM_GATELOADS = num_gateloads
+    GATELOAD_INSTANCE_TYPE = gateload_type
 
     t = Template()
     t.add_description(
         'An Ec2-classic stack with Couchbase Server, Sync Gateway + load testing tools '
     )
-
-    COUCHBASE_INSTANCE_TYPE="m3.medium"
-    SYNC_GW_INSTANCE_TYPE="m3.medium"
-    GATELOAD_INSTANCE_TYPE="m3.medium"
 
     def createCouchbaseSecurityGroups(t):
 
