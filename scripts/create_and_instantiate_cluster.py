@@ -90,13 +90,13 @@ def create_and_instantiate_cluster(config):
     print ">>> Provisioning cluster... "
 
     print ">>> Couchbase Server Instances: {}".format(config.server_number)
-    print ">>> Couchbase Server Type: {}".format(config.server_type)
+    print ">>> Couchbase Server Type:      {}".format(config.server_type)
 
     print ">>> Sync Gateway Instances:     {}".format(config.sync_gateway_number)
-    print ">>> Sync Gateway Type:     {}".format(config.sync_gateway_type)
+    print ">>> Sync Gateway Type:          {}".format(config.sync_gateway_type)
 
-    print ">>> Load Instances:          {}".format(config.load_number)
-    print ">>> Load Type:          {}".format(config.load_number)
+    print ">>> Load Instances:             {}".format(config.load_number)
+    print ">>> Load Type:                  {}".format(config.load_type)
 
     print ">>> Generating Cloudformation Template"
     json = cloudformation_template.gen_template(config)
@@ -122,9 +122,13 @@ def create_and_instantiate_cluster(config):
 if __name__ == "__main__":
 
     usage = """usage: python create_and_instantiate_cloud
-        --stackname <cluster_name> --num-servers <number_couchbase_servers>
+        --stackname=<cluster_name>
+        --num-servers=<number_couchbase_servers>
+        --server-type=<ec2_instance_type>
         --num-sync-gateways <number_sync_gateways>
-        --num-gatlings <number_gateloads>"""
+        --sync-gateway-type=<ec2_instance_type>
+        --num-gatlings <number_gateloads>
+        --gatling-type=<ec2_instance_type>"""
 
     parser = OptionParser(usage=usage)
 
