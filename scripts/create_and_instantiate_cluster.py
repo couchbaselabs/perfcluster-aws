@@ -87,7 +87,7 @@ class ClusterConfig:
 
 def create_and_instantiate_cluster(config):
 
-    print ">>> Provisioning cluster... "
+    print ">>> Creating cluster... "
 
     print ">>> Couchbase Server Instances: {}".format(config.server_number)
     print ">>> Couchbase Server Type:      {}".format(config.server_type)
