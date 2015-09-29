@@ -16,9 +16,14 @@
   - name: set couchbase_server_primary_node variable
     set_fact:
       couchbase_server_primary_node: "{{ lookup('file', '../../temp_couchbase_server_primary_node') }}"
-  - name: flush couchbase server buckets
+  - name: flush couchbase server bucket 1
     shell: "{{ couchbase_server_home_path }}/bin/couchbase-cli bucket-flush --bucket={{ couchbase_server_bucket_name2 }} --force -c {{ couchbase_server_primary_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }}"
+    register: bucket_1_flush
+  - debug: msg="{{ bucket_1_flush.stdout }}"
+  - name: flush couchbase server bucket 2
     shell: "{{ couchbase_server_home_path }}/bin/couchbase-cli bucket-flush --bucket={{ couchbase_server_bucket_name3 }} --force -c {{ couchbase_server_primary_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }}"
+    register: bucket_2_flush
+  - debug: msg="{{ bucket_2_flush.stdout }}"
 
 - hosts: tag_Type_syncgateway
   remote_user: centos
