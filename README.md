@@ -64,7 +64,9 @@ python create_and_instantiate_cluster.py
 ```
 
 This script performs a series of steps for you
+
 1) It uses [troposphere](https://github.com/cloudtools/troposphere) to generate the Cloudformation template (a json file). The Cloudformation config is declared via a Python DSL, which then generates the Cloudformation Json.
+
 2) The generated template is uploaded to AWS with ssh access to the AWS_KEY name you specified (assuming that you have set up that keypair in AWS prior to this)
 
 ### Provision the cluster
@@ -104,6 +106,30 @@ Currently the load generation is specified in ansible/files/gateload_config.json
 ```
 python run_tests.py
     --use-gateload
+```
+
+### Restart sync_gateway
+
+The following command will execute a few steps
+
+1) Flush bucket-1 and bucket-2 in Couchbase Server
+
+2) Stop running sync_gateway services
+
+3) Remove sync_gateway logs
+
+4) Restart sync_gateway services
+
+```
+python reset_sync_gateway.py
+```
+
+### Kill gateload
+
+The following command will kill running gateload processes
+
+```
+python kill_gateload.py
 ```
 
 ### Teardown cluster
