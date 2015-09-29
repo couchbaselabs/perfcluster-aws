@@ -1,18 +1,6 @@
+import os
+
 import provision_cluster
-
-
-def test_non_valid_config_empty():
-    c = provision_cluster.ProvisioningConfig()
-
-    assert not c.is_valid()
-
-
-def test_non_valid_no_build():
-    c = provision_cluster.ProvisioningConfig(
-        build_from_source=True
-    )
-
-    assert not c.is_valid()
 
 
 def test_valid_server_source():
@@ -20,14 +8,16 @@ def test_valid_server_source():
     c = provision_cluster.ProvisioningConfig(
         server_version="3.1.0",
         build_from_source=True,
-        sync_gateway_branch="master"
+        sync_gateway_branch="master",
+        sync_gateway_config_path="../ansible/playbooks/files/sync_gateway_config.json"
     )
     assert c.is_valid()
 
     c = provision_cluster.ProvisioningConfig(
         server_version="3.1.1",
         build_from_source=True,
-        sync_gateway_branch="master"
+        sync_gateway_branch="master",
+        sync_gateway_config_path="../ansible/playbooks/files/sync_gateway_config.json"
     )
     assert c.is_valid()
 
@@ -51,7 +41,7 @@ def test_valid_config_3_1_0():
     assert base == "http://latestbuilds.hq.couchbase.com"
     assert package == "couchbase-server-enterprise_centos6_x86_64_3.1.0-1805-rel.rpm"
 
-    assert c.sync_gateway_config_path == "../ansible/playbooks/files/sync_gateway_config.json"
+    assert os.path.isfile(c.sync_gateway_config_path)
     assert c.sync_gateway_branch == "feature/distributed_index"
 
 
@@ -75,7 +65,7 @@ def test_valid_config_3_1_1():
     assert base == "http://latestbuilds.hq.couchbase.com"
     assert package == "couchbase-server-enterprise_centos6_x86_64_3.1.1-1807-rel.rpm"
 
-    assert c.sync_gateway_config_path == "../ansible/playbooks/files/sync_gateway_config.json"
+    assert os.path.isfile(c.sync_gateway_config_path)
     assert c.sync_gateway_branch == "master"
 
 

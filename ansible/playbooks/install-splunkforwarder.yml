@@ -1,5 +1,6 @@
 ---
 - hosts: tag_Type_couchbaseserver
+  any_errors_fatal: true
   remote_user: centos
   serial: 1
   vars:
@@ -19,6 +20,7 @@
 
 
 - hosts: 127.0.0.1
+  any_errors_fatal: true
   connection: local
   tasks:
   - name: set couchbase_server_primary_node variable
@@ -33,6 +35,7 @@
 
 - hosts: tag_Type_couchbaseserver:tag_Type_syncgateway:tag_Type_gateload
   remote_user: centos
+  any_errors_fatal: true
   sudo: true
   vars:
     splunkforwarder_package: splunkforwarder-6.2.2-255606-linux-2.6-x86_64.rpm
@@ -95,6 +98,7 @@
 
 - hosts: tag_Type_syncgateway
   remote_user: centos
+  any_errors_fatal: true
   sudo: true
   tasks:
   - name: Capture sync gateway logs
@@ -111,6 +115,7 @@
 
 - hosts: tag_Type_gateload
   remote_user: centos
+  any_errors_fatal: true
   vars:
     gateload_node: "{{hostvars[ec2_public_dns_name]['ec2_private_dns_name']}}"
   tasks:
@@ -197,6 +202,7 @@
 
 - hosts: tag_Type_couchbaseserver
   remote_user: centos
+  any_errors_fatal: true
   sudo: true
   tasks:
   - name: Capture couchbase logs

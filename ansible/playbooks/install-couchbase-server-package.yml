@@ -1,6 +1,7 @@
 ---
 - hosts: tag_Type_couchbaseserver
   remote_user: centos
+  any_errors_fatal: true
   serial: 1
   vars:
     couchbase_server_primary_node: "{{hostvars[ec2_public_dns_name]['ec2_private_dns_name']}}"
@@ -11,11 +12,12 @@
 
 - hosts: tag_Type_couchbaseserver
   remote_user: centos
+  any_errors_fatal: true
   sudo: true
   vars:
     couchbase_server_package_base_url:
-    couchbase_server_package_url:
-    couchbase_server_centos_ee_url: {{ couchbase_server_package_base_url }}/{{ couchbase_server_package_url }}
+    couchbase_server_package_name:
+    couchbase_server_package_url: "{{ couchbase_server_package_base_url }}/{{ couchbase_server_package_name }}"
 
     couchbase_server_admin: Administrator
     couchbase_server_password: password
@@ -33,7 +35,7 @@
     couchbase_server_bucket_replica: 1
 
   tasks:
-    - debug: msg="Downloading Couchbase server v. {{ couchbase_server_centos_ee_version }}"
+    - debug: msg="Downloading Couchbase server v. {{ couchbase_server_package_url }}"
     - name: set couchbase_server_primary_node variable
       set_fact:
         couchbase_server_primary_node: "{{ lookup('file', '../../temp_couchbase_server_primary_node') }}"

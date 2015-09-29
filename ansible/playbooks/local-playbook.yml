@@ -1,5 +1,6 @@
 ---
 - hosts: 127.0.0.1
+  any_errors_fatal: true
   vars:
     writer: "false"
   tasks:

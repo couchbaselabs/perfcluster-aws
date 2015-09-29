@@ -1,6 +1,7 @@
 ---
 - hosts: all
   connection: local
+  any_errors_fatal: true
   tasks:
   - name: Create groups based on ec2 access key
     group_by: key=key_{{ ec2_key_name }}
@@ -9,6 +10,7 @@
   vars:
     ec2keyname: key_{{ ec2_key_name }}
   remote_user: centos
+  any_errors_fatal: true
   sudo: yes
 
   tasks:

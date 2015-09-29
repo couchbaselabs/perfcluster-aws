@@ -80,6 +80,9 @@ class ClusterConfig:
             return True
 
     def is_valid(self):
+        if not self.__name:
+            print "Make sure you provide a stackname for your cluster."
+            return False
         types_valid = self.__validate_types()
         numbers_within_limit = self.__validate_numbers()
         return types_valid and numbers_within_limit
@@ -133,11 +136,11 @@ if __name__ == "__main__":
     parser = OptionParser(usage=usage)
 
     parser.add_option("", "--stackname",
-                      action="store", type="string", dest="stackname", default="default",
+                      action="store", type="string", dest="stackname",
                       help="name for your cluster")
 
     parser.add_option("", "--num-servers",
-                      action="store", type="int", dest="num_servers", default=3,
+                      action="store", type="int", dest="num_servers", default=1,
                       help="number of couchbase server instances")
 
     parser.add_option("", "--server-type",
@@ -145,7 +148,7 @@ if __name__ == "__main__":
                       help="EC2 instance type for couchbase server")
 
     parser.add_option("", "--num-sync-gateways",
-                      action="store", type="int", dest="num_sync_gateways", default=3,
+                      action="store", type="int", dest="num_sync_gateways", default=1,
                       help="number of sync_gateway instances")
 
     parser.add_option("", "--sync-gateway-type",
@@ -153,7 +156,7 @@ if __name__ == "__main__":
                       help="EC2 instance type for sync_gateway type")
 
     parser.add_option("", "--num-gatlings",
-                      action="store", type="int", dest="num_gatlings", default=3,
+                      action="store", type="int", dest="num_gatlings", default=1,
                       help="number of gatling instances")
 
     parser.add_option("", "--gatling-type",
