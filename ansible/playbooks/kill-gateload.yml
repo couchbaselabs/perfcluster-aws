@@ -1,5 +1,6 @@
 ---
 - hosts: tag_Type_gateload
+  any_errors_fatal: true
   remote_user: centos
   tasks:
   - name: kill gateload screen

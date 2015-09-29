@@ -5,56 +5,66 @@ from optparse import OptionParser
 
 import generate_gateload_configs
 
-usage = "usage: %run_tests.py -u <number_of_pushers> -d <number_of_pullers> --use-gateload"
 
-parser = OptionParser(usage=usage)
+def run_tests(number_pullers, number_pushers, use_gateload):
+    if use_gateload:
+        print "Using Gateload"
+        print ">>> Starting gateload with {0} pullers and {1} pushers".format(number_pullers, number_pushers)
 
-parser.add_option("-d", "--number-pullers",
-                  action="store", type="string", dest="number_pullers", default=8000,
-                  help="number of pullers")
+        os.chdir("../ansible/playbooks")
 
-parser.add_option("-u", "--number-pushers",
-                  action="store", type="int", dest="number_pushers", default=5000,
-                  help="number of pushers")
+        # Build gateload
+        subprocess.call(["ansible-playbook", "-l", os.path.expandvars("$KEYNAME"), "build-gateload.yml"])
 
-parser.add_option("-o", "--use-gateload",
-                  action="store_true", dest="use_gateload", default=False,
-                  help="flag to set to use gateload")
+        # Generate gateload config
+        generate_gateload_configs.main(number_pullers, number_pushers)
 
-arg_parameters = sys.argv[1:]
+        # Start gateload
+        subprocess.call(["ansible-playbook", "-l", os.path.expandvars("$KEYNAME"), "start-gateload.yml"])
 
-(opts, args) = parser.parse_args(arg_parameters)
+    else:
+        print "Using Gatling"
+        print ">>> Starting gatling with {0} pullers and {1} pushers".format(number_pullers, number_pushers)
+        os.chdir("../ansible/playbooks")
 
-NUMBER_PULLERS = opts.number_pullers
-NUMBER_PUSHERS = opts.number_pushers
-USE_GATELOAD = opts.use_gateload
+        # Configure gatling
+        subprocess.call(["ansible-playbook", "-l", os.path.expandvars("$KEYNAME"), "configure-gatling.yml"])
 
-if USE_GATELOAD:
-    print "Using Gateload"
-    print ">>> Starting gateload with {0} pullers and {1} pushers".format(NUMBER_PULLERS, NUMBER_PUSHERS)
+        # Run Gatling
+        subprocess.call([
+            "ansible-playbook", "-l", os.path.expandvars("$KEYNAME"),
+            "run-gatling-theme.yml",
+            "--extra-vars", "number_of_pullers={0} number_of_pushers={1}".format(number_pullers, number_pushers)
+        ])
 
-    os.chdir("../ansible/playbooks")
+if __name__ == "__main__":
+    usage = """usage: run_tests.py
+    --number-pullers=<number_pullers>
+    --number-pushers<number_pushers>
+    --use-gateload"""
 
-    # Build gateload
-    subprocess.call(["ansible-playbook", "-l", os.path.expandvars("$KEYNAME"), "build-gateload.yml"])
+    parser = OptionParser(usage=usage)
 
-    # Generate gateload config
-    generate_gateload_configs.main(NUMBER_PULLERS, NUMBER_PUSHERS)
+    parser.add_option("", "--number-pullers",
+                      action="store", type="string", dest="number_pullers", default=8000,
+                      help="number of pullers")
 
-    # Start gateload
-    subprocess.call(["ansible-playbook", "-l", os.path.expandvars("$KEYNAME"), "start-gateload.yml"])
+    parser.add_option("", "--number-pushers",
+                      action="store", type="int", dest="number_pushers", default=5000,
+                      help="number of pushers")
 
-else:
-    print "Using Gatling"
-    print ">>> Starting gatling with {0} pullers and {1} pushers".format(NUMBER_PULLERS, NUMBER_PUSHERS)
-    os.chdir("../ansible/playbooks")
+    parser.add_option("", "--use-gateload",
+                      action="store_true", dest="use_gateload", default=False,
+                      help="flag to set to use gateload")
 
-    # Configure gatling
-    subprocess.call(["ansible-playbook", "-l", os.path.expandvars("$KEYNAME"), "configure-gatling.yml"])
+    arg_parameters = sys.argv[1:]
 
-    # Run Gatling
-    subprocess.call([
-        "ansible-playbook", "-l", os.path.expandvars("$KEYNAME"),
-        "run-gatling-theme.yml",
-        "--extra-vars", "number_of_pullers={0} number_of_pushers={1}".format(NUMBER_PULLERS, NUMBER_PUSHERS)
-    ])
+    (opts, args) = parser.parse_args(arg_parameters)
+
+
+
+    run_tests(
+        number_pullers=opts.number_pullers,
+        number_pushers=opts.number_pushers,
+        use_gateload=opts.use_gateload
+    )

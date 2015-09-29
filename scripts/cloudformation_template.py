@@ -4,29 +4,20 @@
 # cloudformation template by hand.  It also allows for DRY approaches
 # to maintaining cloudformation templates.
 
-import sys
-from optparse import OptionParser
-
 from troposphere import Ref, Template, Parameter, Output, Join, GetAtt, Tags
 import troposphere.ec2 as ec2
 
 
-def gen_template(
-        num_servers,
-        server_type,
-        num_syncgateways,
-        sync_gateway_type,
-        num_gateloads,
-        gateload_type):
+def gen_template(config):
 
-    NUM_COUCHBASE_SERVERS = num_servers
-    COUCHBASE_INSTANCE_TYPE = server_type
+    num_couchbase_servers = config.server_number
+    couchbase_instance_type = config.server_type
 
-    NUM_SYNC_GW_SERVERS = num_syncgateways
-    SYNC_GW_INSTANCE_TYPE = sync_gateway_type
+    num_sync_gateway_servers = config.sync_gateway_number
+    sync_gateway_server_type = config.sync_gateway_type
 
-    NUM_GATELOADS = num_gateloads
-    GATELOAD_INSTANCE_TYPE = gateload_type
+    num_gateloads = config.load_number
+    gateload_instance_type = config.load_type
 
     t = Template()
     t.add_description(
@@ -110,11 +101,11 @@ def gen_template(
     secGrpCouchbase = createCouchbaseSecurityGroups(t)
 
     # Couchbase Server Instances
-    for i in xrange(NUM_COUCHBASE_SERVERS):
+    for i in xrange(num_couchbase_servers):
         name = "couchbaseserver{}".format(i)
         instance = ec2.Instance(name)
         instance.ImageId = "ami-96a818fe"  # centos7
-        instance.InstanceType = COUCHBASE_INSTANCE_TYPE
+        instance.InstanceType = couchbase_instance_type
         instance.SecurityGroups = [Ref(secGrpCouchbase)]
         instance.KeyName = Ref(keyname_param)
         instance.Tags=Tags(Name=name, Type="couchbaseserver")
@@ -132,11 +123,11 @@ def gen_template(
         t.add_resource(instance)
 
     # Sync Gw instances (ubuntu ami)
-    for i in xrange(NUM_SYNC_GW_SERVERS):
+    for i in xrange(num_sync_gateway_servers):
         name = "syncgateway{}".format(i)
         instance = ec2.Instance(name)
         instance.ImageId = "ami-96a818fe"  # centos7
-        instance.InstanceType = SYNC_GW_INSTANCE_TYPE
+        instance.InstanceType = sync_gateway_server_type
         instance.SecurityGroups = [Ref(secGrpCouchbase)]
         instance.KeyName = Ref(keyname_param)
         instance.BlockDeviceMappings = [
@@ -160,11 +151,11 @@ def gen_template(
         t.add_resource(instance)
 
     # Gateload instances (ubuntu ami)
-    for i in xrange(NUM_GATELOADS):
+    for i in xrange(num_gateloads):
         name = "gateload{}".format(i)
         instance = ec2.Instance(name)
         instance.ImageId = "ami-96a818fe"  # centos7
-        instance.InstanceType = GATELOAD_INSTANCE_TYPE
+        instance.InstanceType = gateload_instance_type
         instance.SecurityGroups = [Ref(secGrpCouchbase)]
         instance.KeyName = Ref(keyname_param)
         instance.Tags=Tags(Name=name, Type="gateload")
