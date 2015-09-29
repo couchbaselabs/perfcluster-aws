@@ -119,7 +119,7 @@ def provision_cluster(config):
 
     os.chdir("../ansible/playbooks")
 
-    #run_ansible_playbook("install-go.yml")
+    run_ansible_playbook("install-go.yml")
 
     # Install server package
     run_ansible_playbook(
