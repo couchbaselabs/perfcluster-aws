@@ -89,6 +89,8 @@ class ProvisioningConfig:
             return False
 
         if not os.path.isfile(self.__sync_gateway_config_path):
+            print "Could not find sync_gateway config file: {}".format(self.__sync_gateway_config_path)
+            print "Try to use an absolute path."
             return False
 
         return True

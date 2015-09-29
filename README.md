@@ -72,14 +72,14 @@ This script performs a series of steps for you
 ### Provision the cluster
 
 Install Couchbase Server and build sync_gateway from source with optional --branch (master is default).
-Additionally, you can provide an optional custom sync_gateway_config.json file. If this is not specified, it will use the config in "files/sync_gateway_config.json"
+Additionally, you can provide an optional custom sync_gateway_config.json file. If this is not specified, it will use the config in "perfcluster-aws/ansible/playbooks/files/sync_gateway_config.json"
 
 ```
 python provision_cluster.py 
     --server-version=3.1.0
-    --build-from-source
+    --build-sync-gateway
     --branch="feature/distributed_cache_stale_ok"
-    --sync-gateway-config-file="<path to your sync_gateway_config.json file>"
+    --sync-gateway-config-file="<absolute path to your sync_gateway_config.json file>"
 ```
 
 (IN PROGRESS) Install Couchbase Server and download sync_gateway binary (1.1.1 is default)
