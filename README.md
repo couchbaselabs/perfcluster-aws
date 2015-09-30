@@ -77,7 +77,6 @@ Additionally, you can provide an optional custom sync_gateway_config.json file. 
 ```
 python provision_cluster.py 
     --server-version=3.1.0
-    --build-sync-gateway
     --branch="feature/distributed_cache_stale_ok"
     --sync-gateway-config-file="<absolute path to your sync_gateway_config.json file>"
 ```

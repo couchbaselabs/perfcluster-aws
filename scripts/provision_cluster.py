@@ -5,144 +5,55 @@ import urlparse
 import httplib
 from optparse import OptionParser
 
+import install_sync_gateway
+import install_couchbase_server
+
+from install_couchbase_server import CouchbaseServerConfig
+from install_sync_gateway import SyncGatewayConfig
+
+import ansible_runner
+
 # TODO Add SG package
 
-class ProvisioningConfig:
+def provision_cluster(couchbase_server_config, sync_gateway_config):
 
-    def __init__(self,
-                 server_version,
-                 build_from_source,
-                 sync_gateway_branch,
-                 sync_gateway_config_path,
-                 server_build="",
-                 sync_gateway_version="",
-                 sync_gateway_build=""):
+    print ">>> Validating..."
 
-        self.__server_version = server_version
-        self.__server_build = server_build
-        self.__sync_gateway_version = sync_gateway_version
-        self.__sync_gateway_build = sync_gateway_build
+    if not couchbase_server_config.is_valid():
+        print "Invalid server provisioning configuration. Exiting ..."
+        sys.exit(1)
 
-        self.__build_from_source = build_from_source
-        self.__sync_gateway_branch = sync_gateway_branch
-        self.__sync_gateway_config_path = os.path.abspath(sync_gateway_config_path)
+    if not sync_gateway_config.is_valid():
+        print "Invalid sync_gateway provisioning configuration. Exiting ..."
+        sys.exit(1)
 
-    @property
-    def build_from_source(self):
-        return self.__build_from_source
-
-    @property
-    def sync_gateway_branch(self):
-        return self.__sync_gateway_branch
-
-    @property
-    def sync_gateway_config_path(self):
-        return self.__sync_gateway_config_path
-
-    def server_base_url_and_package(self):
-        return self.__base_url_package_for_server(self.__server_version, self.__server_build)
-
-    def sync_gateway_base_url_and_package(self):
-        return self.__base_url_package_for_sync_gateway(self.__sync_gateway_version, self.__sync_gateway_build)
-
-    def __base_url_package_for_server(self, version, build):
-        if version == "3.1.0":
-            base_url = "http://latestbuilds.hq.couchbase.com"
-            package_name = "couchbase-server-enterprise_centos6_x86_64_3.1.0-1805-rel.rpm"
-            return base_url, package_name
-        elif version == "3.1.1":
-            base_url = "http://latestbuilds.hq.couchbase.com"
-            package_name = "couchbase-server-enterprise_centos6_x86_64_3.1.1-1807-rel.rpm"
-            return base_url, package_name
-        elif version == "4.0.0":
-            # http://latestbuilds.hq.couchbase.com/couchbase-server/sherlock/4051/couchbase-server-enterprise-4.0.0-4051-centos7.x86_64.rpm
-            base_url = "http://latestbuilds.hq.couchbase.com/couchbase-server/sherlock/{0}".format(build)
-            package_name = "couchbase-server-enterprise-{0}-{1}-centos7.x86_64.rpm".format(version, build)
-            return base_url, package_name
-        else:
-            print "Server package url not found. Make sure to specify a version / build."
-            sys.exit(1)
-
-    def __base_url_package_for_sync_gateway(self, version, build):
-        base_url = "http://latestbuilds.hq.couchbase.com/couchbase-sync-gateway/release/{0}/{1}-{2}".format(version, version, build)
-        package_name = "couchbase-sync-gateway-enterprise_{0}-{1}_x86_64.rpm".format(version, build)
-        return base_url, package_name
-
-    def __package_exists(self, url):
-        url_parts = urlparse.urlparse(url)
-        host = url_parts.hostname
-        path = url_parts.path
-        connection = httplib.HTTPConnection(host)
-        connection.request("HEAD", path)
-        return connection.getresponse().status == 200
-
-    def is_valid(self):
-        if self.__build_from_source and self.__sync_gateway_branch == "":
-            print "You must provide a branch to build for sync_gateway"
-            return False
-        if not self.__build_from_source and (self.__sync_gateway_version == "" or self.__sync_gateway_build == ""):
-            print "You must provide a version and build for sync_gateway package"
-            return False
-
-        if self.__server_version == "4.0.0" and self.__server_build == "":
-            print "You need to specify a build number for server version"
-            return False
-
-        if not os.path.isfile(self.__sync_gateway_config_path):
-            print "Could not find sync_gateway config file: {}".format(self.__sync_gateway_config_path)
-            print "Try to use an absolute path."
-            return False
-
-        return True
-
-
-def provision_cluster(config):
-
-    def run_ansible_playbook(script_name, extra_vars=""):
-        if extra_vars != "":
-            subprocess.call(["ansible-playbook", "-l", os.path.expandvars("$KEYNAME"), script_name, "--extra-vars", extra_vars])
-        else:
-            subprocess.call(["ansible-playbook", "-l", os.path.expandvars("$KEYNAME"), script_name])
-
-    print ">>> Provisioning cluster... "
+    print ">>> Provisioning cluster..."
 
     # Get server base url and package name
-    server_base_url, server_package_name = config.server_base_url_and_package()
+    server_base_url, server_package_name = couchbase_server_config.server_base_url_and_package()
 
     print ">>> Server package: {0}/{1}".format(server_base_url, server_package_name)
 
-    if config.build_from_source:
-        print ">>> Building sync_gateway: branch={}".format(config.sync_gateway_branch)
+    if sync_gateway_config.build_from_source:
+        print ">>> Building sync_gateway: branch={}".format(sync_gateway_config.sync_gateway_branch)
     else:
         # TODO
         print ">>> sync_gateway package"
 
-    print ">>> Using sync_gateway config: {}".format(config.sync_gateway_config_path)
+    print ">>> Using sync_gateway config: {}".format(sync_gateway_config.sync_gateway_config_path)
 
     os.chdir("../ansible/playbooks")
 
-    run_ansible_playbook("install-go.yml")
+    # Install dependencies
+    ansible_runner.run_ansible_playbook("install-go.yml")
 
     # Install server package
-    run_ansible_playbook(
-        "install-couchbase-server-package.yml",
-        "couchbase_server_package_base_url={0} couchbase_server_package_name={1}".format(server_base_url, server_package_name)
-    )
+    install_couchbase_server.install_couchbase_server(couchbase_server_config)
 
-   # Install sync_gateway
-    if config.build_from_source:
-        print "Build from source with branch: {}".format(config.sync_gateway_branch)
-        run_ansible_playbook("build-sync-gateway-source.yml", "branch={}".format(config.sync_gateway_branch))
-    else:
-        print "Build stable"
-        sync_gateway_base_url, sync_gateway_package_name = config.sync_gateway_base_url_and_package()
-        run_ansible_playbook("install-sync-gateway-package.yml", "couchbase_sync_gateway_package_base_url={0} couchbase_sync_gateway_package={1}".format(
-            sync_gateway_base_url,
-            sync_gateway_package_name
-        ))
+    # Install sync_gateway
+    install_sync_gateway.install_sync_gateway(sync_gateway_config)
 
-    run_ansible_playbook("install-sync-gateway-service.yml", "sync_gateway_config_filepath={}".format(config.sync_gateway_config_path))
-    run_ansible_playbook("install-splunkforwarder.yml")
+    ansible_runner.run_ansible_playbook("install-splunkforwarder.yml")
 
 
 if __name__ == "__main__":
@@ -197,18 +108,20 @@ if __name__ == "__main__":
 
     (opts, args) = parser.parse_args(arg_parameters)
 
-    provisioning_config = ProvisioningConfig(
-        server_version=opts.server_version,
-        server_build=opts.server_build,
-        sync_gateway_version=opts.sync_gateway_version,
-        sync_gateway_build=opts.sync_gateway_build,
+    server_config = CouchbaseServerConfig(
+        version=opts.server_version,
+        build_number=opts.server_build
+    )
+
+    sync_gateway_config = SyncGatewayConfig(
+        version=opts.sync_gateway_version,
+        build_number=opts.sync_gateway_build,
         build_from_source=opts.build_from_source,
-        sync_gateway_branch=opts.source_branch,
+        branch_to_build=opts.source_branch,
         sync_gateway_config_path=opts.sync_gateway_config_file
     )
 
-    if not provisioning_config.is_valid():
-        print "Invalid provisioning configuration. Exiting ..."
-        sys.exit(1)
-
-    provision_cluster(provisioning_config)
+    provision_cluster(
+        couchbase_server_config=server_config,
+        sync_gateway_config=sync_gateway_config
+    )
