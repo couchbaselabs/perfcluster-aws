@@ -33,5 +33,7 @@
     service: name=sync_gateway state=stopped
   - name: delete sync_gateway logs
     shell: rm -f /home/sync_gateway/logs/*.log
+  - name: delete sync_gateway pindex files
+    shell: rm -rf /home/sync_gateway/*.pindex
   - name: start sync_gateway service
     service: name=sync_gateway state=started
