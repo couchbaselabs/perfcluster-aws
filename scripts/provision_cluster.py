@@ -76,6 +76,8 @@ if __name__ == "__main__":
 
     parser = OptionParser(usage=usage)
 
+    default_sync_gateway_config = os.path.abspath("../ansible/playbooks/files/sync_gateway_config.json")
+
     parser.add_option("", "--server-version",
                       action="store", type="string", dest="server_version", default="3.1.1",
                       help="server version to download")
@@ -93,7 +95,7 @@ if __name__ == "__main__":
                       help="sync_gateway build to download")
 
     parser.add_option("", "--sync-gateway-config-file",
-                      action="store", type="string", dest="sync_gateway_config_file", default="../ansible/playbooks/files/sync_gateway_config.json",
+                      action="store", type="string", dest="sync_gateway_config_file", default=default_sync_gateway_config,
                       help="path to your sync_gateway_config file")
 
     parser.add_option("", "--sync-gateway-branch",
