@@ -104,18 +104,20 @@ python install_couchbase_server.py
 
 Will install sync_gateway in the cluster on all sync_gateway nodes. Uses perfcluster-aws/ansible/playbooks/files/sync_gateway_config.json by default
 
-```
-python install_sync_gateway.py
-    --version=<couchbase_server_version>
-    --build-number=<server_build_number>
-    --config-file-path=<path_to_local_sync_gateway_config> (optional)
-```
-
-or from source
+From source
 
 ```
 python install_sync_gateway.py
     --branch=<sync_gateway_branch_to_build>
+    --config-file-path=<path_to_local_sync_gateway_config> (optional)
+```
+
+or from release (IN PROGRESS)
+
+```
+python install_sync_gateway.py
+    --version=<couchbase_server_version>
+    --build-number=<server_build_number>
     --config-file-path=<path_to_local_sync_gateway_config> (optional)
 ```
 
