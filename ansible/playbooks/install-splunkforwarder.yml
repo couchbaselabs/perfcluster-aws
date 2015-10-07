@@ -40,7 +40,8 @@
   vars:
     splunkforwarder_package: splunkforwarder-6.2.2-255606-linux-2.6-x86_64.rpm
     splunkforwarder_url: http://www.splunk.com/page/download_track?file=6.2.2/universalforwarder/linux/{{ splunkforwarder_package }}&ac=adwords-syslog&wget=true&name=wget&platform=Linux&architecture=x86_64&version=6.2.2&product=splunk&typed=release
-    forward_server: splunk.couchbasemobile.com:9997
+    forward_server:
+    forward_server_auth:
     splunk_add_on_for_unix_and_linux: splunk-add-on-for-unix-and-linux_512.tgz
     splunk_add_on_for_unix_and_linux_url: http://couchbase-mobile.s3.amazonaws.com/perfcluster-aws/splunk_unix_linux_add_on/{{ splunk_add_on_for_unix_and_linux }}
     inputs_conf: /opt/splunkforwarder/etc/apps/Splunk_TA_nix/local/inputs.conf
@@ -60,8 +61,9 @@
   - name: start splunkforwarder
     shell: /opt/splunkforwarder/bin/splunk start --accept-license
     sudo: true
+  - debug: msg="Splunk Forward Server: {{ forward_server }} using credentials {{ forward_server_auth }}"
   - name: add forward-server to Splunk forwarder
-    shell: /opt/splunkforwarder/bin/splunk add forward-server {{ forward_server }} -auth admin:changeme
+    shell: /opt/splunkforwarder/bin/splunk add forward-server {{ forward_server }} -auth {{ forward_server_auth }}
     sudo: true
   - name: Test the forwarder
     shell: /opt/splunkforwarder/bin/splunk list forward-server

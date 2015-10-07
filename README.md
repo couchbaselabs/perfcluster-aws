@@ -46,6 +46,13 @@ $ export AWS_KEY=<your-aws-keypair-name>
 $ export KEYNAME=key_<your-aws-keypair-name>
 ```
 
+**To gather data in Splunk you will want to set variable below
+
+```
+$ export SPLUNK_SERVER="<url_of_splunk_server>:<port>"
+$ export SPLUNK_SERVER_AUTH="<username>:<password>"
+```
+
 ## Install steps 
 
 `cd scripts` to get into the scripts subdirectory.
