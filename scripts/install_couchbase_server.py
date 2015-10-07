@@ -57,7 +57,7 @@ class CouchbaseServerConfig:
 
     def is_valid(self):
         if self.__version not in self.__valid_versions:
-            print "Make sure your version is in valid version in CouchbaseServerConfig"
+            print "Make sure your server version is one of the following: {}".format(self.__valid_versions)
             return False
         if self.__version == "4.0.0" and self.__build_number is None:
             print "You need to specify a build number for server version"
@@ -82,10 +82,7 @@ def install_couchbase_server(couchbase_server_config):
     )
 
 if __name__ == "__main__":
-    usage = """usage: python install_couchbase_server.py
-    --version=<couchbase_server_version>
-    --build-number=<server_build_number>
-    """
+    usage = "usage: python install_couchbase_server.py --version=<couchbase_server_version> --build-number=<server_build_number>"
 
     parser = OptionParser(usage=usage)
 
