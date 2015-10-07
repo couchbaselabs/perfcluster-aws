@@ -17,6 +17,9 @@ import ansible_runner
 
 def provision_cluster(couchbase_server_config, sync_gateway_config):
 
+    print(couchbase_server_config)
+    print(sync_gateway_config)
+
     print ">>> Validating..."
 
     if not couchbase_server_config.is_valid():
@@ -34,13 +37,13 @@ def provision_cluster(couchbase_server_config, sync_gateway_config):
 
     print ">>> Server package: {0}/{1}".format(server_base_url, server_package_name)
 
-    if sync_gateway_config.build_from_source:
-        print ">>> Building sync_gateway: branch={}".format(sync_gateway_config.sync_gateway_branch)
+    if sync_gateway_config.branch is not None:
+        print ">>> Building sync_gateway: branch={}".format(sync_gateway_config.branch)
     else:
         # TODO
         print ">>> sync_gateway package"
 
-    print ">>> Using sync_gateway config: {}".format(sync_gateway_config.sync_gateway_config_path)
+    print ">>> Using sync_gateway config: {}".format(sync_gateway_config.config_path)
 
     os.chdir("../ansible/playbooks")
 
@@ -69,7 +72,6 @@ if __name__ == "__main__":
     usage: python provision_cluster.py
     --server-version=<server_version_number>
     --server-build=<server_build_number>
-    --build-sync-gateway
     --branch=<sync_gateway_branch_to_build>
     --sync-gateway-config-file=<path_to_local_sync_gateway_config>
     """
@@ -81,26 +83,22 @@ if __name__ == "__main__":
                       help="server version to download")
 
     parser.add_option("", "--server-build",
-                      action="store", type="string", dest="server_build",
+                      action="store", type="string", dest="server_build", default=None,
                       help="server build to download")
 
     parser.add_option("", "--sync-gateway-version",
-                      action="store", type="string", dest="sync_gateway_version",
+                      action="store", type="string", dest="sync_gateway_version", default=None,
                       help="sync_gateway version to download")
 
     parser.add_option("", "--sync-gateway-build",
-                      action="store", type="string", dest="sync_gateway_build",
+                      action="store", type="string", dest="sync_gateway_build", default=None,
                       help="sync_gateway build to download")
 
     parser.add_option("", "--sync-gateway-config-file",
                       action="store", type="string", dest="sync_gateway_config_file", default="../ansible/playbooks/files/sync_gateway_config.json",
                       help="path to your sync_gateway_config file")
 
-    parser.add_option("", "--build-sync-gateway",
-                      action="store_true", dest="build_from_source", default=True,
-                      help="build sync_gateway from source")
-
-    parser.add_option("", "--branch",
+    parser.add_option("", "--sync-gateway-branch",
                       action="store", type="string", dest="source_branch", default="master",
                       help="sync_gateway branch to checkout and build")
 
@@ -116,9 +114,8 @@ if __name__ == "__main__":
     sync_gateway_config = SyncGatewayConfig(
         version=opts.sync_gateway_version,
         build_number=opts.sync_gateway_build,
-        build_from_source=opts.build_from_source,
-        branch_to_build=opts.source_branch,
-        sync_gateway_config_path=opts.sync_gateway_config_file
+        branch=opts.source_branch,
+        config_path=opts.sync_gateway_config_file
     )
 
     provision_cluster(

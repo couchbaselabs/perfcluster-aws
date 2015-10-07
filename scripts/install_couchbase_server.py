@@ -7,8 +7,8 @@ import ansible_runner
 class CouchbaseServerConfig:
 
     def __init__(self,
-                 version="",
-                 build_number=-1):
+                 version,
+                 build_number):
 
         self.__valid_versions = [
             "3.1.0",
@@ -44,6 +44,13 @@ class CouchbaseServerConfig:
     def build_number(self):
         return self.__build_number
 
+    def __str__(self):
+        output = "\n  Couchbase Server configuration\n"
+        output += "  ------------------------------------------\n"
+        output += "  version:      {}\n".format(self.__version)
+        output += "  build number: {}\n".format(self.__build_number)
+        return output
+
     def server_base_url_and_package(self):
         return self.__base_url_package_for_server(self.__version, self.__build_number)
 
@@ -51,7 +58,7 @@ class CouchbaseServerConfig:
         if self.__version not in self.__valid_versions:
             print "Make sure your version is in valid version in CouchbaseServerConfig"
             return False
-        if self.__version == "4.0.0" and self.__build_number == -1:
+        if self.__version == "4.0.0" and self.__build_number is None:
             print "You need to specify a build number for server version"
             return False
         return True
@@ -82,11 +89,11 @@ if __name__ == "__main__":
     parser = OptionParser(usage=usage)
 
     parser.add_option("", "--version",
-                      action="store", type="string", dest="version", default="3.1.1",
+                      action="store", type="string", dest="version", default=None,
                       help="server version to download")
 
     parser.add_option("", "--build-number",
-                      action="store", type="string", dest="build_number",
+                      action="store", type="string", dest="build_number", default=None,
                       help="server build to download")
 
     arg_parameters = sys.argv[1:]

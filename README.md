@@ -77,8 +77,8 @@ Additionally, you can provide an optional custom sync_gateway_config.json file. 
 ```
 python provision_cluster.py 
     --server-version=3.1.0
-    --branch="feature/distributed_cache_stale_ok"
-    --sync-gateway-config-file="<absolute path to your sync_gateway_config.json file>"
+    --sync-gateway-branch="feature/distributed_cache_stale_ok"
+    --sync-gateway-config-file="<absolute path to your sync_gateway_config.json file>" (optional)
 ```
 
 (IN PROGRESS) Install Couchbase Server and download sync_gateway binary (1.1.1 is default)
@@ -87,6 +87,36 @@ python provision_cluster.py
 python provision_cluster.py 
     --server-version=3.1.0
     --sync-gateway-version=1.1.1
+    --sync-gateway-build=10
+```
+
+### Install Couchbase Server
+
+Will install Couchbase Server in the cluster on all couchbase server nodes
+
+```
+python install_couchbase_server.py
+    --version=<couchbase_server_version>
+    --build-number=<server_build_number>
+```
+
+### Install sync_gateway
+
+Will install sync_gateway in the cluster on all sync_gateway nodes. Uses perfcluster-aws/ansible/playbooks/files/sync_gateway_config.json by default
+
+```
+python install_sync_gateway.py
+    --version=<couchbase_server_version>
+    --build-number=<server_build_number>
+    --config-file-path=<path_to_local_sync_gateway_config> (optional)
+```
+
+or from source
+
+```
+python install_sync_gateway.py
+    --branch=<sync_gateway_branch_to_build>
+    --config-file-path=<path_to_local_sync_gateway_config> (optional)
 ```
 
 ### Setup and run gatling tests

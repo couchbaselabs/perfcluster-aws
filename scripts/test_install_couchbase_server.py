@@ -3,17 +3,11 @@ import os
 from install_couchbase_server import CouchbaseServerConfig
 
 
-def test_defaults():
-    c = CouchbaseServerConfig()
-    assert c.version == ""
-    assert c.build_number == -1
-    assert not c.is_valid()
-
-
 def test_valid_config_3_1_0():
     # http://latestbuilds.hq.couchbase.com/couchbase-server-enterprise_centos6_x86_64_3.1.0-1805-rel.rpm
     c = CouchbaseServerConfig(
-        version="3.1.0"
+        version="3.1.0",
+        build_number=None
     )
 
     valid_config = c.is_valid()
@@ -24,7 +18,8 @@ def test_valid_config_3_1_0():
 def test_valid_config_3_1_1():
     # http://latestbuilds.hq.couchbase.com/couchbase-server-enterprise_centos6_x86_64_3.1.1-1807-rel.rpm
     c = CouchbaseServerConfig(
-        version="3.1.1"
+        version="3.1.1",
+        build_number=None
     )
 
     valid_config = c.is_valid()
@@ -40,6 +35,7 @@ def test_valid_config_3_1_1():
 def test_valid_not_config_4_0_0():
     c = CouchbaseServerConfig(
         version="4.0.0",
+        build_number=None
     )
 
     assert not c.is_valid()
@@ -61,6 +57,7 @@ def test_valid_config_4_0_0():
 def test_invalid_version():
     c = CouchbaseServerConfig(
         version="6.0.0",
+        build_number=None
     )
 
     assert not c.is_valid()
