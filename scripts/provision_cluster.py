@@ -20,6 +20,21 @@ def provision_cluster(couchbase_server_config, sync_gateway_config):
     print(couchbase_server_config)
     print(sync_gateway_config)
 
+    try:
+        splunk_server_endpoint = os.environ["SPLUNK_SERVER"]
+    except KeyError:
+        print("ERROR: Make sure you have set $SPLUNK_SERVER to your splunk server enpoint")
+        sys.exit(1)
+
+    try:
+        splunk_server_auth = os.environ["SPLUNK_SERVER_AUTH"]
+    except KeyError:
+        print("ERROR: Make sure you have set $SPLUNK_SERVER_AUTH to your splunk server authentication")
+        sys.exit(1)
+
+    print("Spunk Server Endpoint: {}".format(splunk_server_endpoint))
+    print("Spunk Server Auth: {}".format(splunk_server_auth))
+
     print ">>> Validating..."
 
     if not couchbase_server_config.is_valid():
@@ -54,8 +69,11 @@ def provision_cluster(couchbase_server_config, sync_gateway_config):
     # Install sync_gateway
     install_sync_gateway.install_sync_gateway(sync_gateway_config)
 
-    ansible_runner.run_ansible_playbook("install-splunkforwarder.yml")
-
+    # Install splunk forwarder
+    ansible_runner.run_ansible_playbook("install-splunkforwarder.yml", "forward_server={0} forward_server_auth={1}".format(
+        splunk_server_endpoint,
+        splunk_server_auth
+    ))
 
 if __name__ == "__main__":
     usage = """usage: python provision_cluster.py

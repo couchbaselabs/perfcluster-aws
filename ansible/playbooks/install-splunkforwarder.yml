@@ -40,7 +40,8 @@
   vars:
     splunkforwarder_package: splunkforwarder-6.2.2-255606-linux-2.6-x86_64.rpm
     splunkforwarder_url: http://www.splunk.com/page/download_track?file=6.2.2/universalforwarder/linux/{{ splunkforwarder_package }}&ac=adwords-syslog&wget=true&name=wget&platform=Linux&architecture=x86_64&version=6.2.2&product=splunk&typed=release
-    forward_server: splunk.couchbasemobile.com:9997
+    forward_server:
+    forward_server_auth:
     splunk_add_on_for_unix_and_linux: splunk-add-on-for-unix-and-linux_512.tgz
     splunk_add_on_for_unix_and_linux_url: http://couchbase-mobile.s3.amazonaws.com/perfcluster-aws/splunk_unix_linux_add_on/{{ splunk_add_on_for_unix_and_linux }}
     inputs_conf: /opt/splunkforwarder/etc/apps/Splunk_TA_nix/local/inputs.conf
@@ -60,8 +61,9 @@
   - name: start splunkforwarder
     shell: /opt/splunkforwarder/bin/splunk start --accept-license
     sudo: true
+  - debug: msg="Splunk Forward Server {{ forward_server }} using credentials {{ forward_server_auth }}"
   - name: add forward-server to Splunk forwarder
-    shell: /opt/splunkforwarder/bin/splunk add forward-server {{ forward_server }} -auth admin:changeme
+    shell: /opt/splunkforwarder/bin/splunk add forward-server {{ forward_server }} -auth {{ forward_server_auth }}
     sudo: true
   - name: Test the forwarder
     shell: /opt/splunkforwarder/bin/splunk list forward-server
@@ -100,9 +102,11 @@
   remote_user: centos
   any_errors_fatal: true
   sudo: true
+  vars:
+    forward_server_auth:
   tasks:
   - name: Capture sync gateway logs
-    shell: /opt/splunkforwarder/bin/splunk add monitor /home/sync_gateway/logs -index main -sourcetype sync_gateway_logs -auth admin:changeme
+    shell: /opt/splunkforwarder/bin/splunk add monitor /home/sync_gateway/logs -index main -sourcetype sync_gateway_logs -auth {{ forward_server_auth }}
   - name: kill collect_url_requests.sh
     shell: pkill -f "collect_url_requests.sh"
     ignore_errors: yes
@@ -111,20 +115,21 @@
   - name: Collect _expvar logs
     shell: ((nohup /home/centos/collect_url_requests.sh -r http://localhost:4985/_expvar -f /home/centos/_expvar.logs -t 60 1>/dev/null 2>&1) &)
   - name: Capture _expvar logs
-    shell: /opt/splunkforwarder/bin/splunk add monitor /home/centos/_expvar.logs -index main -sourcetype sync_gateway_expvars  -auth admin:changeme
+    shell: /opt/splunkforwarder/bin/splunk add monitor /home/centos/_expvar.logs -index main -sourcetype sync_gateway_expvars  -auth {{ forward_server_auth }}
 
 - hosts: tag_Type_gateload
   remote_user: centos
   any_errors_fatal: true
   vars:
     gateload_node: "{{hostvars[ec2_public_dns_name]['ec2_private_dns_name']}}"
+    forward_server_auth:
   tasks:
   - name: set primary_gateload_node variable
     set_fact:
       primary_gateload_node: "{{ lookup('file', '../../temp_gateload_node') }}"
   - file: path=/home/centos/logs state=directory
   - name: Capture gateload logs
-    shell: /opt/splunkforwarder/bin/splunk add monitor /home/centos/logs -index main -sourcetype gateload_logs -auth admin:changeme
+    shell: /opt/splunkforwarder/bin/splunk add monitor /home/centos/logs -index main -sourcetype gateload_logs -auth {{ forward_server_auth }}
     sudo: true
   - name: kill collect_url_requests.sh
     shell: pkill -f "collect_url_requests.sh"
@@ -136,9 +141,8 @@
     shell: ((nohup /home/centos/collect_url_requests.sh -r http://localhost:9876/debug/vars -f /home/centos/debug_vars.logs -t 60 1>/dev/null 2>&1) &)
   - pause: seconds=5
   - name: Capture debug/vars logs
-    shell: /opt/splunkforwarder/bin/splunk add monitor /home/centos/debug_vars.logs -index main -sourcetype gateload_expvars  -auth admin:changeme
+    shell: /opt/splunkforwarder/bin/splunk add monitor /home/centos/debug_vars.logs -index main -sourcetype gateload_expvars  -auth {{ forward_server_auth }}
     sudo: true
-
 
   - name: Clone cbagent into /home/centos/cbagent
     git: repo=https://github.com/andreibaranouski/cbagent
@@ -189,14 +193,14 @@
     shell: "cd /home/centos/cbagent/ && nohup python -m cbagent --at temp_cbagent_stats_monitor.spec >/dev/null 2>&1 &"
     when: primary_gateload_node == gateload_node
   - name: Capture couchbase stats
-    shell: /opt/splunkforwarder/bin/splunk add monitor /tmp/stats_folder -index main -sourcetype cbagent -auth admin:changeme
+    shell: /opt/splunkforwarder/bin/splunk add monitor /tmp/stats_folder -index main -sourcetype cbagent -auth {{ forward_server_auth }}
     when: primary_gateload_node == gateload_node
     sudo: true
 
   - file: path=/home/projects/sg-gatling-load/themes/gateload-sim/target/gatling/results state=directory
     sudo: true
   - name: Capture gateload logs
-    shell: /opt/splunkforwarder/bin/splunk add monitor /home/projects/sg-gatling-load/themes/.../target/gatling/results/.../simulation.log -index main -sourcetype gatling_results -auth admin:changeme
+    shell: /opt/splunkforwarder/bin/splunk add monitor /home/projects/sg-gatling-load/themes/.../target/gatling/results/.../simulation.log -index main -sourcetype gatling_results -auth {{ forward_server_auth }}
     sudo: true
 
 
@@ -204,8 +208,10 @@
   remote_user: centos
   any_errors_fatal: true
   sudo: true
+  vars:
+    forward_server_auth:
   tasks:
   - name: Capture couchbase logs
-    #shell: /opt/splunkforwarder/bin/splunk add monitor /opt/couchbase/var/lib/couchbase/logs -index main -sourcetype couchbase_logs -auth admin:changeme
-    shell: /opt/splunkforwarder/bin/splunk add monitor /opt/couchbase/var/lib/couchbase/logs/error.log -index main -sourcetype couchbase_logs -auth admin:changeme
-    shell: /opt/splunkforwarder/bin/splunk add monitor /opt/couchbase/var/lib/couchbase/logs/mapreduce_errors.log -index main -sourcetype couchbase_logs -auth admin:changeme
+    #shell: /opt/splunkforwarder/bin/splunk add monitor /opt/couchbase/var/lib/couchbase/logs -index main -sourcetype couchbase_logs -auth {{ forward_server_auth }}
+    shell: /opt/splunkforwarder/bin/splunk add monitor /opt/couchbase/var/lib/couchbase/logs/error.log -index main -sourcetype couchbase_logs -auth {{ forward_server_auth }}
+    shell: /opt/splunkforwarder/bin/splunk add monitor /opt/couchbase/var/lib/couchbase/logs/mapreduce_errors.log -index main -sourcetype couchbase_logs -auth {{ forward_server_auth }}
