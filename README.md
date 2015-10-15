@@ -9,13 +9,19 @@ Uses a Cloudformation template to spin up all instances.
 
 ## Install pre-requisites
 
+**Install PIP**
+
+```
+$ sudo easy_install pip
+```
+
 **Python Dependencies**
 
 ```
-$ pip install ansible
-$ pip install boto
-$ pip install troposphere
-$ pip install awscli
+$ sudo pip install ansible
+$ sudo pip install boto
+$ sudo pip install troposphere
+$ sudo pip install awscli
 ```
 
 Alternatively, you can use the [Docker image](https://github.com/couchbaselabs/perfcluster-aws/wiki/Running-under-Docker) which has all the pre-requisites pre-installed.
