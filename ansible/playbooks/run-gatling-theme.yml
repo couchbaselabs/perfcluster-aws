@@ -16,6 +16,6 @@
     sudo: no
 
   - name: Run sg-gatling-load theme
-    shell: mvn test -e -P gateload-users -DnumPullers={{ number_of_pullers }} -DnumPushers={{ number_of_pushers }} -DrampUpIntervalMs=600000 > gatling-theme.log
+    shell: mvn install -e -P gateload-sim -DnumPullers={{ number_of_pullers }} -DnumPushers={{ number_of_pushers }} -DrampUpIntervalMs=600000 > gatling-theme.log
     args:
       chdir: /home/projects/sg-gatling-load/
