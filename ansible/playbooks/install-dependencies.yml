@@ -5,7 +5,7 @@
   any_errors_fatal: true
   sudo: true
   tasks:
-  - name: disable scatter / gather for eth0
+  - name: disable scatter / gather for eth0 (see http://bit.ly/1R25bbE)
     shell: ethtool -K eth0 sg off
 
 - hosts: tag_Type_syncgateway:tag_Type_gateload
