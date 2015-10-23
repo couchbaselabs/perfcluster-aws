@@ -1,4 +1,13 @@
 ---
+# https://github.com/couchbase/sync_gateway/issues/1193#issuecomment-150395613
+- hosts: tag_Type_couchbaseserver:tag_Type_syncgateway:tag_Type_gateload
+  remote_user: centos
+  any_errors_fatal: true
+  sudo: true
+  tasks:
+  - name: disable scatter / gather for eth0
+    shell: ethtool -K eth0 sg off
+
 - hosts: tag_Type_syncgateway:tag_Type_gateload
   remote_user: centos
   any_errors_fatal: true
@@ -37,5 +46,3 @@
   - name: raise max file descriptors
     copy: src=files/security-nofiles-limit.conf dest=/etc/security/limits.d/20-nofiles.conf owner=root group=root mode=0644
 
-
-  
