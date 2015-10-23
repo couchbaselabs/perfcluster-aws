@@ -61,7 +61,7 @@ def provision_cluster(couchbase_server_config, sync_gateway_config):
     print ">>> Using sync_gateway config: {}".format(sync_gateway_config.config_path)
 
     # Install dependencies
-    ansible_runner.run_ansible_playbook("install-go.yml")
+    ansible_runner.run_ansible_playbook("install-dependencies.yml")
 
     # Install server package
     install_couchbase_server.install_couchbase_server(couchbase_server_config)
