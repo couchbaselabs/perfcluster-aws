@@ -240,6 +240,13 @@ do
 done
 ```
 
+## Collecting cpu/heap/profile reports
+
+```
+$ cd ansible/playbooks
+$ ansible-playbook -l $KEYNAME collect-sync-gateway-profile.yml
+```
+
 ## Viewing data on Splunk
 
 First, you will need to [Install Splunk](https://github.com/couchbaselabs/perfcluster-aws/wiki/Setting-up-a-Splunk-Server) on a server somewhere.
