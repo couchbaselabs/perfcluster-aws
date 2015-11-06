@@ -32,8 +32,8 @@ def provision_cluster(couchbase_server_config, sync_gateway_config):
         print("ERROR: Make sure you have set $SPLUNK_SERVER_AUTH to your splunk server authentication")
         sys.exit(1)
 
-    print("Spunk Server Endpoint: {}".format(splunk_server_endpoint))
-    print("Spunk Server Auth: {}".format(splunk_server_auth))
+    print("Splunk Server Endpoint: {}".format(splunk_server_endpoint))
+    print("Splunk Server Auth: {}".format(splunk_server_auth))
 
     print ">>> Validating..."
 
