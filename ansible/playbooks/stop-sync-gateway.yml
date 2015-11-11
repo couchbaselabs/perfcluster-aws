@@ -1,9 +1,0 @@
----
-- hosts: tag_Type_syncgateway
-  any_errors_fatal: true
-  remote_user: centos
-  sudo: true
-  tasks:
-  - name: stop sync gateway service
-    service: name=sync_gateway state=stopped
-

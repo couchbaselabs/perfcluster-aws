@@ -1,8 +1,0 @@
----
-- hosts: 127.0.0.1
-  any_errors_fatal: true
-  vars:
-    writer: "false"
-  tasks:
-  - name: run through template
-    template: src=files/sync_gateway_config.json dest=/tmp/out.json
