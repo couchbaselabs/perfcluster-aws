@@ -71,15 +71,14 @@ NUM_COUCHBASE_SERVERS_DATA_NEW=0
 NUM_COUCHBASE_SERVERS_INDEX=1
 NUM_COUCHBASE_SERVERS_QUERY=1
 
-S3_REGION="eu-west-1"
 AVAILABILITY_ZONE="us-east-1a"
 CLIENT_INSTANCE_TYPE="c3.xlarge"
-COUCHBASE_INSTANCE_TYPE="r3.4xlarge" #c3.8xlarge"
+COUCHBASE_INSTANCE_TYPE="r3.4xlarge"
 
 CLIENT_IMAGE="ami-xxxxxxxx"
 COUCHBASE_IMAGE="ami-yyyyyyyy"
 
-BUCKET_NAME="scalability-owend"
+BUCKET_NAME="cb_scalability"
 
 ```
 The COUCHBASE_IMAGE needs to contain an installation of couchbase, that has not been configured.
@@ -93,17 +92,21 @@ $ python scalability_couchbase.py > scalability_couchbase.json
 
 ## Upload to S3
 
-Because of the size of the templates they need to be uploaded to S3 before they can be run.  This can be achieved using the aws.sh script, which uploads to a bucket called cb-scalability. (To avoid conflicts the script can be modified to use an alternate bucket.)
+Because of the size of the templates they need to be uploaded to S3 before they can be run.  This can be achieved using the aws.sh script, which uploads to a bucket of your choice.
+
+### Creating the bucket
+Login to AWS.  Go to S3 and select create bucket.  Select US standard as the Region.  Use the unique bucket name you specified in the configuration.py file.  The same bucket name is also used in the export below.
 
 ```
 $ export BUCKET_NAME=cb_scalability
-$ export S3_REGION=eu-west-1
 ```
+### Uploading the files
+You now can upload the json files to your S3 bucket using the following scripts.
 
 ```
-$ ./aws.sh scalability_top.json $S3_REGION $BUCKET_NAME $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY
-$ ./aws.sh scalability_vpc.json $S3_REGION $BUCKETNAME $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY
-$ ./aws.sh scalability_couchbase.json $S3_REGION $BUCKET_NAME $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY
+$ ./aws.sh scalability_top.json $BUCKET_NAME $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY
+$ ./aws.sh scalability_vpc.json $BUCKETNAME $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY
+$ ./aws.sh scalability_couchbase.json $BUCKET_NAME $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY
 ```
 
 ## Install steps
@@ -112,8 +115,11 @@ $ ./aws.sh scalability_couchbase.json $S3_REGION $BUCKET_NAME $AWS_ACCESS_KEY_ID
 
 **Via AWS CLI**
 
+Note the template-url contains the bucket name (which is cb-scalability in the example below).
+So you will need to change this to your bucket name
+
 ```
-aws cloudformation create-stack --stack-name ScalabilityPerfCluster --region eu-west-1 --template-url https://s3-eu-west-1.amazonaws.com/cb-scalability/scalability_top.json  --parameters "ParameterKey=KeyName,ParameterValue=<your_keypair_name>"
+aws cloudformation create-stack --stack-name ScalabilityPerfCluster --region us-east-1 --template-url https://cb-scalability.s3.amazonaws.com/scalability_top.json --parameters "ParameterKey=KeyName,ParameterValue=<your_keypair_name>"
 ```
 
 Note: CloudFormation is a top-level AWS service (i.e. like EC2 and VPC).  If you click on the CloudFormation service you should see the stack ScalabilityPerfCluster
@@ -123,7 +129,14 @@ Note: CloudFormation is a top-level AWS service (i.e. like EC2 and VPC).  If you
 ```
 cd ansible/playbooks
 export KEYNAME=key_<your_keyname_name>
-ansible-playbook -l $KEYNAME scalability-configure-test1-single-bucket-heterogeneous-couchbase.yml
+ansible-playbook -l $KEYNAME scalability-configure-test1-1-bucket-heterogeneous-couchbase.yml
+```
+
+### Running test on configured instance
+```
+cd ansible/playbooks
+export KEYNAME=key_<your_keyname_name>
+ansible-playbook -l $KEYNAME scalability-test1-1bucket.yml
 ```
 
 ## Viewing instances by type
