@@ -25,18 +25,18 @@ keyname_param = t.add_parameter(Parameter(
 
 
 instance = cloudformation.Stack("vpcStack")
-instance.TemplateURL =  "https://s3.amazonaws.com/" + configuration.BUCKET_NAME + "/scalability_vpc.json"
+instance.TemplateURL =  "https://s3.amazonaws.com/" + configuration.S3_BUCKET_NAME + "/scalability_vpc.json"
 instance.TimeoutInMinutes = 60
 t.add_resource(instance)
 
 
 
 p = {"KeyNameParameter": Ref("KeyName"), "SecurityGroupIdParameter" : GetAtt("vpcStack", "Outputs.SecurityGroupId"),
-     "SubnetIdParameter" : GetAtt("vpcStack", "Outputs.SubnetId")}
+     "SubnetId1Parameter" : GetAtt("vpcStack", "Outputs.SubnetId1"), "SubnetId2Parameter" : GetAtt("vpcStack", "Outputs.SubnetId2")}
 
 
 instance = cloudformation.Stack("couchbaseStack")
-instance.TemplateURL = "https://s3.amazonaws.com/" + configuration.BUCKET_NAME + "/scalability_couchbase.json"
+instance.TemplateURL = "https://s3.amazonaws.com/" + configuration.S3_BUCKET_NAME + "/scalability_couchbase.json"
 instance.TimeoutInMinutes = 60
 instance.Parameters = p
 t.add_resource(instance)

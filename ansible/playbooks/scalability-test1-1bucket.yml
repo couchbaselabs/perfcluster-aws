@@ -10,9 +10,9 @@
     couchbase_server_bucket_type: couchbase
 
   tasks:
-    - name: set couchbase_server_primary_node variable
+    - name: set couchbase_server_cluster1_primary_node variable
       set_fact:
-        couchbase_server_primary_node: "{{ lookup('file', '../../temp_couchbase_server_primary_node') }}"
+        couchbase_server_primary_node: "{{ lookup('file', '../../temp_couchbase_server_cluster1_primary_node') }}"
 
     - name: Run cb-pillowfight0
       command: cbc-pillowfight -U couchbase://{{  couchbase_server_primary_node  }}/default0 -r 100 -m 1024 -M 1024 -t 1 -I 1000000 -B 100 --rate-limit 6500 

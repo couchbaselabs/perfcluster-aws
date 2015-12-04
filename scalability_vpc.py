@@ -55,24 +55,47 @@ def createCouchbaseRoute(t, gateway, routetable):
     ))
     return couchbaseRoute
 
-def createCouchbaseSubnet(t, vpc):
+def createCouchbaseSubnet1(t, vpc):
     couchbaseSubnet = t.add_resource(ec2.Subnet(
-       'SUBNET',
-        AvailabilityZone = configuration.AVAILABILITY_ZONE,
-        CidrBlock='10.0.0.0/16',
+       'SUBNET1',
+        AvailabilityZone = configuration.CLUSTER1_AVAILABILITY_ZONE,
+        CidrBlock='10.0.0.0/17',
         MapPublicIpOnLaunch='true',
-        Tags=Tags(Name=Join('', ['subnet-scalability-', Ref('AWS::Region')])),
+        Tags=Tags(Name=Join('', ['subnet1-scalability-', Ref('AWS::Region')])),
         VpcId=Ref(vpc)
     ))
     return couchbaseSubnet
 
+def createCouchbaseSubnet2(t, vpc):
+    couchbaseSubnet = t.add_resource(ec2.Subnet(
+       'SUBNET2',
+        AvailabilityZone = configuration.CLUSTER2_AVAILABILITY_ZONE,
+        CidrBlock='10.0.128.0/17',
+        MapPublicIpOnLaunch='true',
+        Tags=Tags(Name=Join('', ['subnet2-scalability-', Ref('AWS::Region')])),
+        VpcId=Ref(vpc)
+    ))
+    return couchbaseSubnet
+
+
+
 def createCouchbaseSubnetRouteTableAssociation(t, subnet, routetable):
     couchbaseSubnetRouteTableAssociation = t.add_resource(ec2.SubnetRouteTableAssociation(
-        'SUBNETROUTETABLEASSOCATION',
+        'SUBNETROUTETABLEASSOCATION1',
         RouteTableId=Ref(routetable),
         SubnetId=Ref(subnet)
     ))
     return couchbaseSubnetRouteTableAssociation
+
+
+def createCouchbaseSubnetRouteTableAssociation2(t, subnet, routetable):
+    couchbaseSubnetRouteTableAssociation = t.add_resource(ec2.SubnetRouteTableAssociation(
+        'SUBNETROUTETABLEASSOCATION2',
+        RouteTableId=Ref(routetable),
+        SubnetId=Ref(subnet)
+    ))
+    return couchbaseSubnetRouteTableAssociation
+
 
 def createCouchbaseSecurityGroups(t, vpc):
 
@@ -151,16 +174,26 @@ couchbaseInternetGateway = createCouchbaseInternetGateway(t)
 couchbaseVPCGatewayAttachment = createCouchbaseVPCGatewayAttachment(t, couchbaseInternetGateway, couchbaseVPC)
 couchbaseRouteTable = createCouchbaseRouteTable(t, couchbaseVPC)
 couchbaseRoute = createCouchbaseRoute(t, couchbaseInternetGateway, couchbaseRouteTable)
-couchbaseSubnet = createCouchbaseSubnet(t, couchbaseVPC)
+couchbaseSubnet = createCouchbaseSubnet1(t, couchbaseVPC)
 couchbaseSubnetRouteTableAssociation = createCouchbaseSubnetRouteTableAssociation(t, couchbaseSubnet, couchbaseRouteTable)
 secGrpCouchbase = createCouchbaseSecurityGroups(t, couchbaseVPC)
 
-output = Output(
-    "SubnetId",
-    Description="Subnet ID",
-    Value= Ref("SUBNET")
-)
 
+couchbaseSubnet2 = createCouchbaseSubnet2(t, couchbaseVPC)
+couchbaseSubnetRouteTableAssociation2 = createCouchbaseSubnetRouteTableAssociation2(t, couchbaseSubnet2, couchbaseRouteTable)
+
+output = Output(
+    "SubnetId1",
+    Description="Subnet ID1",
+    Value= Ref("SUBNET1")
+)
+t.add_output(output)
+
+output = Output(
+    "SubnetId2",
+    Description="Subnet ID2",
+    Value= Ref("SUBNET2")
+)
 t.add_output(output)
 
 
