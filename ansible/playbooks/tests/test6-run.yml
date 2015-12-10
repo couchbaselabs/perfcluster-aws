@@ -1,0 +1,28 @@
+---
+- hosts: tag_Type_couchbaseserver_data_cluster1
+  remote_user: ubuntu
+  sudo: true
+  vars:
+    couchbase_server_admin: Administrator
+    couchbase_server_password: couchbase
+    couchbase_server_admin_port: 8091
+    couchbase_server_home_path: /opt/couchbase/
+
+    couchbase_server_node: "{{hostvars[ec2_ip_address]['ec2_public_dns_name']}}"
+    couchbase_server_node_group: "{{hostvars[ec2_ip_address]['ec2_tag_Group']}}"
+
+    couchbase_server_group4: "Group 4" 
+
+  tasks:
+    - name: set couchbase_server_cluster1_primary_node variable
+      set_fact:
+        couchbase_server_cluster1_primary_node: "{{ lookup('file', '../../temp_couchbase_server_cluster1_primary_node') }}"
+
+
+    - name: Join additional cluster nodes - data
+      shell: "{{ couchbase_server_home_path }}/bin/couchbase-cli server-add -c {{ couchbase_server_cluster1_primary_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} --server-add={{ couchbase_server_node }}:{{ couchbase_server_admin_port }} --server-add-username={{ couchbase_server_admin }} --server-add-password={{ couchbase_server_password }} --services=data --group-name='{{ couchbase_server_node_group }}'"
+      when: couchbase_server_node_group == couchbase_server_group4
+
+    - name: Rebalance cluster
+      shell: "{{ couchbase_server_home_path }}/bin/couchbase-cli rebalance -c {{ couchbase_server_cluster1_primary_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }}"
+      when: couchbase_server_node == couchbase_server_cluster1_primary_node
