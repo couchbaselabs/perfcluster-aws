@@ -141,7 +141,7 @@ for i in xrange(configuration.NUM_BACKUPS):
     instance.SecurityGroupIds = [ Ref(securitygroupidparameter)]
     instance.SubnetId = Ref(subnetid1parameter)
     instance.KeyName = Ref(keynameparameter)
-    instance.Tags=Tags(Name=name, Type="backups")
+    instance.Tags=Tags(Name=name, Type="backup")
     t.add_resource(instance)
 
 print(t.to_json())

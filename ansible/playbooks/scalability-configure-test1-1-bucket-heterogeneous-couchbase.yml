@@ -17,10 +17,6 @@
   remote_user: ubuntu
   sudo: true
   vars:
-    couchbase_server_ubuntu_ee_version: 4.0.0-rc0
-    couchbase_server_ubuntu_ee_package: couchbase-server-enterprise-{{ couchbase_server_ubuntu_ee_version }}-ubuntu14.04_amd64.rpm
-    couchbase_server_ubuntu_ee_url: http://packages.couchbase.com/releases/{{ couchbase_server_ubuntu_ee_version }}/{{ couchbase_server_ubuntu_ee_package }}
-
     couchbase_server_admin: Administrator
     couchbase_server_password: couchbase
     couchbase_server_ram: "{{ansible_memtotal_mb|int}}"
@@ -95,10 +91,6 @@
       shell:  "{{ couchbase_server_home_path }}/bin/couchbase-cli group-manage -c {{ couchbase_server_cluster1_primary_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} --create --group-name='{{ couchbase_server_group4 }}'"
       when: couchbase_server_node == couchbase_server_cluster1_primary_node
 
-#    - name: move to create group
-#      shell:  "{{ couchbase_server_home_path }}/bin/couchbase-cli group-manage -c {{ couchbase_server_cluster1_primary_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} --to-group={{ couchbase_server_node_group }}  --from-group='Group 1' --move-servers={{ couchbase_server_node }}:{{ couchbase_server_admin_port }}"
-#      when: couchbase_server_node == couchbase_server_cluster1_primary_node
-
     - name: Join additional cluster nodes - data
       shell: "{{ couchbase_server_home_path }}/bin/couchbase-cli server-add -c {{ couchbase_server_cluster1_primary_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} --server-add={{ couchbase_server_node }}:{{ couchbase_server_admin_port }} --server-add-username={{ couchbase_server_admin }} --server-add-password={{ couchbase_server_password }} --services=data --group-name='{{ couchbase_server_node_group }}'"
       when: not (couchbase_server_node == couchbase_server_cluster1_primary_node ) and couchbase_server_node_type == 'couchbaseserver_data_cluster1'
@@ -118,3 +110,16 @@
     - name: Create new default0 bucket
       shell: "{{ couchbase_server_home_path }}/bin/couchbase-cli bucket-create -c {{ couchbase_server_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} --bucket={{ couchbase_server_bucket_name0 }} --bucket-type={{ couchbase_server_bucket_type }} --bucket-port={{ couchbase_server_bucket_port }} --bucket-ramsize={{ couchbase_server_bucket_ram }} --bucket-replica={{ couchbase_server_bucket_replica }}"
       when: couchbase_server_node == couchbase_server_cluster1_primary_node
+
+- hosts: tag_Type_backup
+  remote_user: ubuntu
+  sudo: true
+  tasks:
+    - name: mk filesystem
+      shell: mkfs -t ext4 /dev/xvdb
+
+    - name: mount /dev/xvdb
+      shell: mount /dev/xvdb /mnt
+
+    - name: chown ubuntu:ubuntu for /mnt
+      shell: chown ubuntu:ubuntu /mnt
