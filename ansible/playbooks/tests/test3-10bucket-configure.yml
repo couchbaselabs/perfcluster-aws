@@ -31,8 +31,17 @@
     couchbase_server_node_type: "{{hostvars[ec2_ip_address]['ec2_tag_Type']}}"
     couchbase_server_node_group: "{{hostvars[ec2_ip_address]['ec2_tag_Group']}}"
     couchbase_server_bucket_name0: default0
+    couchbase_server_bucket_name1: default1
+    couchbase_server_bucket_name2: default2
+    couchbase_server_bucket_name3: default3
+    couchbase_server_bucket_name4: default4
+    couchbase_server_bucket_name5: default5
+    couchbase_server_bucket_name6: default6
+    couchbase_server_bucket_name7: default7
+    couchbase_server_bucket_name8: default8
+    couchbase_server_bucket_name9: default9
     couchbase_server_bucket_type: couchbase
-    couchbase_server_bucket_ram: "{{ couchbase_server_cluster_ram |int }}"
+    couchbase_server_bucket_ram: "{{ (0.1*couchbase_server_cluster_ram|int)|int }}"
     couchbase_server_bucket_port: 11211
     couchbase_server_bucket_replica: 3
 
@@ -111,6 +120,42 @@
       shell: "{{ couchbase_server_home_path }}/bin/couchbase-cli bucket-create -c {{ couchbase_server_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} --bucket={{ couchbase_server_bucket_name0 }} --bucket-type={{ couchbase_server_bucket_type }} --bucket-port={{ couchbase_server_bucket_port }} --bucket-ramsize={{ couchbase_server_bucket_ram }} --bucket-replica={{ couchbase_server_bucket_replica }}"
       when: couchbase_server_node == couchbase_server_cluster1_primary_node
 
+    - name: Create new default1 bucket
+      shell: "{{ couchbase_server_home_path }}/bin/couchbase-cli bucket-create -c {{ couchbase_server_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} --bucket={{ couchbase_server_bucket_name1 }} --bucket-type={{ couchbase_server_bucket_type }} --bucket-port={{ couchbase_server_bucket_port }} --bucket-ramsize={{ couchbase_server_bucket_ram }} --bucket-replica={{ couchbase_server_bucket_replica }}"
+      when: couchbase_server_node == couchbase_server_cluster1_primary_node
+
+    - name: Create new default2 bucket
+      shell: "{{ couchbase_server_home_path }}/bin/couchbase-cli bucket-create -c {{ couchbase_server_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} --bucket={{ couchbase_server_bucket_name2 }} --bucket-type={{ couchbase_server_bucket_type }} --bucket-port={{ couchbase_server_bucket_port }} --bucket-ramsize={{ couchbase_server_bucket_ram }} --bucket-replica={{ couchbase_server_bucket_replica }}"
+      when: couchbase_server_node == couchbase_server_cluster1_primary_node
+
+    - name: Create new default3 bucket
+      shell: "{{ couchbase_server_home_path }}/bin/couchbase-cli bucket-create -c {{ couchbase_server_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} --bucket={{ couchbase_server_bucket_name3 }} --bucket-type={{ couchbase_server_bucket_type }} --bucket-port={{ couchbase_server_bucket_port }} --bucket-ramsize={{ couchbase_server_bucket_ram }} --bucket-replica={{ couchbase_server_bucket_replica }}"
+      when: couchbase_server_node == couchbase_server_cluster1_primary_node
+
+    - name: Create new default4 bucket
+      shell: "{{ couchbase_server_home_path }}/bin/couchbase-cli bucket-create -c {{ couchbase_server_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} --bucket={{ couchbase_server_bucket_name4 }} --bucket-type={{ couchbase_server_bucket_type }} --bucket-port={{ couchbase_server_bucket_port }} --bucket-ramsize={{ couchbase_server_bucket_ram }} --bucket-replica={{ couchbase_server_bucket_replica }}"
+      when: couchbase_server_node == couchbase_server_cluster1_primary_node
+
+    - name: Create new default5 bucket
+      shell: "{{ couchbase_server_home_path }}/bin/couchbase-cli bucket-create -c {{ couchbase_server_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} --bucket={{ couchbase_server_bucket_name5 }} --bucket-type={{ couchbase_server_bucket_type }} --bucket-port={{ couchbase_server_bucket_port }} --bucket-ramsize={{ couchbase_server_bucket_ram }} --bucket-replica={{ couchbase_server_bucket_replica }}"
+      when: couchbase_server_node == couchbase_server_cluster1_primary_node
+
+    - name: Create new default6 bucket
+      shell: "{{ couchbase_server_home_path }}/bin/couchbase-cli bucket-create -c {{ couchbase_server_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} --bucket={{ couchbase_server_bucket_name6 }} --bucket-type={{ couchbase_server_bucket_type }} --bucket-port={{ couchbase_server_bucket_port }} --bucket-ramsize={{ couchbase_server_bucket_ram }} --bucket-replica={{ couchbase_server_bucket_replica }}"
+      when: couchbase_server_node == couchbase_server_cluster1_primary_node
+
+    - name: Create new default7 bucket
+      shell: "{{ couchbase_server_home_path }}/bin/couchbase-cli bucket-create -c {{ couchbase_server_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} --bucket={{ couchbase_server_bucket_name7 }} --bucket-type={{ couchbase_server_bucket_type }} --bucket-port={{ couchbase_server_bucket_port }} --bucket-ramsize={{ couchbase_server_bucket_ram }} --bucket-replica={{ couchbase_server_bucket_replica }}"
+      when: couchbase_server_node == couchbase_server_cluster1_primary_node
+
+    - name: Create new default8 bucket
+      shell: "{{ couchbase_server_home_path }}/bin/couchbase-cli bucket-create -c {{ couchbase_server_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} --bucket={{ couchbase_server_bucket_name8 }} --bucket-type={{ couchbase_server_bucket_type }} --bucket-port={{ couchbase_server_bucket_port }} --bucket-ramsize={{ couchbase_server_bucket_ram }} --bucket-replica={{ couchbase_server_bucket_replica }}"
+      when: couchbase_server_node == couchbase_server_cluster1_primary_node
+
+    - name: Create new default0 bucket
+      shell: "{{ couchbase_server_home_path }}/bin/couchbase-cli bucket-create -c {{ couchbase_server_node }}:{{ couchbase_server_admin_port }} --user={{ couchbase_server_admin }} --password={{ couchbase_server_password }} --bucket={{ couchbase_server_bucket_name9 }} --bucket-type={{ couchbase_server_bucket_type }} --bucket-port={{ couchbase_server_bucket_port }} --bucket-ramsize={{ couchbase_server_bucket_ram }} --bucket-replica={{ couchbase_server_bucket_replica }}"
+      when: couchbase_server_node == couchbase_server_cluster1_primary_node
+
 - hosts: tag_Type_backup
   remote_user: ubuntu
   sudo: true
@@ -132,31 +177,31 @@
        couchbase_server_cluster1_primary_node: "{{ lookup('file', '../../temp_couchbase_server_cluster1_primary_node') }}"
 
    - name: Add view to default0
-     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}/default0/_design/1 -d @1.ddoc"
+     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}:8092/default0/_design/1 -d @1.ddoc"
 
    - name: Add view to default1
-     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}/default1/_design/1 -d @1.ddoc"
+     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}:8092/default1/_design/1 -d @1.ddoc"
 
    - name: Add view to default2
-     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}/default2/_design/1 -d @1.ddoc"
+     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}:8092/default2/_design/1 -d @1.ddoc"
 
    - name: Add view to default3
-     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}/default3/_design/1 -d @1.ddoc"
+     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}:8092/default3/_design/1 -d @1.ddoc"
 
    - name: Add view to default4
-     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}/default4/_design/1 -d @1.ddoc"
+     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}:8092/default4/_design/1 -d @1.ddoc"
 
    - name: Add view to default5
-     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}/default5/_design/1 -d @1.ddoc"
+     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}:8092/default5/_design/1 -d @1.ddoc"
 
    - name: Add view to default6
-     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}/default6/_design/1 -d @1.ddoc"
+     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}:8092/default6/_design/1 -d @1.ddoc"
 
    - name: Add view to default7
-     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}/default7/_design/1 -d @1.ddoc"
+     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}:8092/default7/_design/1 -d @1.ddoc"
 
    - name: Add view to default8
-     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}/default8/_design/1 -d @1.ddoc"
+     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}:8092/default8/_design/1 -d @1.ddoc"
 
    - name: Add view to default9
-     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}/default9/_design/1 -d @1.ddoc"
+     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}:8092/default9/_design/1 -d @1.ddoc"

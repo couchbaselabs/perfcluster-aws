@@ -132,4 +132,4 @@
        couchbase_server_cluster1_primary_node: "{{ lookup('file', '../../temp_couchbase_server_cluster1_primary_node') }}"
 
    - name: Add view to default0
-     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}/default0/_design/1 -d @1.ddoc"
+     shell: "curl -X PUT -H 'Content-Type: application/json' http://{{ couchbase_server_cluster1_primary_node }}:8092/default0/_design/1 -d @1.ddoc"
