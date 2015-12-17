@@ -69,6 +69,7 @@ for i in xrange(configuration.NUM_COUCHBASE_SERVERS_DATA_CLUSTER2):
 
 for i in xrange(configuration.NUM_COUCHBASE_SERVERS_DATA_CLUSTER1_NEW):
     name = "couchbaseserverdatacluster1newnode{}".format(i)
+    group = "Group 4"
     instance = ec2.Instance(name)
     instance.ImageId = configuration.COUCHBASE_IMAGE
     instance.InstanceType = configuration.COUCHBASE_INSTANCE_TYPE
@@ -76,7 +77,7 @@ for i in xrange(configuration.NUM_COUCHBASE_SERVERS_DATA_CLUSTER1_NEW):
     instance.SecurityGroupIds = [ Ref(securitygroupidparameter)]
     instance.SubnetId = Ref(subnetid1parameter)
     instance.KeyName = Ref(keynameparameter)
-    instance.Tags=Tags(Name=name, Type="couchbaseserver_data_cluster1_new")
+    instance.Tags=Tags(Name=name, Type="couchbaseserver_data_cluster1_new", Group=group)
     t.add_resource(instance)
 
 for i in xrange(configuration.NUM_COUCHBASE_SERVERS_DATA_CLUSTER2_NEW):
